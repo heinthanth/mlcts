@@ -21,8 +21,11 @@ function convert(content: string): string
     codeTemplate(content)
     |> eval
     |> .at(1)
+    // fix nhg -> hng
+    |> .replaceAll("nhg", "hng")
+    // fix nhy -> hny
+    |> .replaceAll("nhy", "hny")
     |> .replaceAll(" ", "")
-    |> .replaceAll("nhg", "hng") // fix nhg -> hng
 
 // convert a row of myg2p-dict.txt
 function convertRow(row: string[]): (string|number)[]
@@ -59,7 +62,10 @@ const entriesLength = entriesToBeProcessed.length
 progressBar.start(entriesToBeProcessed.length, 0)
 
 const outputCsvPath = path.join("assets", "myg2p-dict-mlcts.csv")
-Deno.writeTextFileSync(outputCsvPath, '')
+
+const header = "burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables"
+Deno.writeTextFileSync(outputCsvPath, header + "\n")
+
 const outputCsv = Deno.openSync(outputCsvPath, { append: true })
 const textEncoder = new TextEncoder()
 

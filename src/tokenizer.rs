@@ -822,6 +822,7 @@ impl<'i> Tokenizer<'i>
         | BasicConsonant::G
         | BasicConsonant::Gh
         | BasicConsonant::Ng
+        | BasicConsonant::T
         | BasicConsonant::P
         | BasicConsonant::Hp
         | BasicConsonant::B
@@ -853,12 +854,12 @@ impl<'i> Tokenizer<'i>
         | BasicConsonant::G
         | BasicConsonant::Gh
         | BasicConsonant::Ng
+        | BasicConsonant::T
         | BasicConsonant::D
         | BasicConsonant::P
         | BasicConsonant::Hp
         | BasicConsonant::B
         | BasicConsonant::M
-        | BasicConsonant::T
     ) && self.peek() == 'r'
     {
       let combined_medial = MedialDiacritic::combine_medial_diacritics(

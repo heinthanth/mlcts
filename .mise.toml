@@ -1,5 +1,5 @@
-[tasks.prepare-mlcts-dict]
-run = "deno run -A npm:@danielx/civet -c tools/prepare-mlcts-dict.civet -o - | deno run -A -"
+[tasks.prepare-myg2p-mlcts]
+run = "deno run -A npm:@danielx/civet -c tools/prepare-myg2p-mlcts.civet -o - | deno run -A -"
 
 [tasks.tokenizer-input-gen] 
 run = "deno run -A npm:@danielx/civet -c tools/tokenizer-input-gen.civet -o - | deno run -A -"
