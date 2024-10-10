@@ -17,8 +17,9 @@ Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am 
 
 ## Required Tools
 
-- Rust compiler: I use nightly. Stable might works too.
-- Deno: To run scripts to prepare dictionary (but not required)
+- [Rust compiler](https://www.rust-lang.org/): I use nightly. Stable might works too.
+- [Deno](https://deno.com/): To run scripts to prepare dictionary (optional)
+- [mise-en-place](https://mise.jdx.dev/): Task runner (optional)
 
 ## Acknowledgement
 
@@ -35,7 +36,7 @@ The following components are licensed under [CC BY-NC-SA 4.0](LICENSE):
 
 - [assets/myg2p-dict.txt](assets/myg2p-dict.txt) - the original myG2P dictionary.
 - [assets/myg2p-dict-mlcts.csv](assets/myg2p-dict-mlcts.csv) - the modified dictionary with text written in MLCTS.
-- [prepare-mlcts-dict.ts](tools/prepare-mlcts-dict.ts) - script to generate dictionary that contains text written in MLCTS.
+- [tools](tools/) - scripts used to generate dictionary and input csv.
 - [tests](tests) - unit tests and test inputs which interact with the myG2P dictionary or its derivative works.
 
 All other parts of the project are licensed under the [MIT](LICENSE-CODE) License, unless otherwise specified explicitly.

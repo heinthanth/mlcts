@@ -1,0 +1,74 @@
+import * as path from "jsr:@std/path"
+import { stringify } from "jsr:@std/csv"
+import { Presets, SingleBar } from "https://esm.sh/cli-progress@3.12.0"
+
+const baseURL = "https://raw.githubusercontent.com"
+const repoURL = comptime baseURL + "/myanmaropenwordnet/mya2rom"
+const my2rom = comptime repoURL + "/refs/heads/master/mya2rom.js"
+const romanisations = comptime repoURL + "/refs/heads/master/romanisations.js"
+
+const my2romJs = await fetch(my2rom).then((res) => res.text())
+const romanisationsJs = await fetch(romanisations).then((res) => res.text())
+
+// write JS code to call mya2rom_all function
+function codeTemplate(content: string): string
+    ```${romanisationsJs}
+    ${my2romJs.replaceAll("for (letter in", "for (const letter in")}\n
+    mya2rom_all(${JSON.stringify(content)})```
+
+// convert Burmese script into MLCTS
+function convert(content: string): string
+    codeTemplate(content)
+    |> eval
+    |> .at(1)
+    |> .replaceAll(" ", "")
+    |> .replaceAll("nhg", "hng") // fix nhg -> hng
+
+// convert a row of myg2p-dict.txt
+function convertRow(row: string[]): (string|number)[]
+    const word = row[1]
+    const syllables = row[2].split(" ")
+    . word
+    . convert(word)
+    . syllables.length
+    . syllables.join("|")
+    . syllables.map(convert).join("|")
+
+// input
+const dictPath = path.join("assets", "myg2p-dict.txt")
+const myg2pDict = Deno.readTextFileSync(dictPath)
+
+const dictEntries = myg2pDict
+    |> .split("\n")
+    |> .filter((line: string) => line.length > 0)
+    |> .filter((line: string) => !line.includes("..."))
+    |> .map((line: string) => line.split("\t"))
+
+// progress bar
+const progressBarpreset = Presets.shades_classic
+const progressBarOpt =
+    format: "[*] Progress [{bar}] {percentage}% | {value}/{total}"
+
+const progressBar = new SingleBar(progressBarOpt, progressBarpreset)
+
+// conversion process
+console.log "[*] Converting dict to MLCTS ..."
+
+const entriesToBeProcessed = dictEntries.slice(4)
+const entriesLength = entriesToBeProcessed.length
+progressBar.start(entriesToBeProcessed.length, 0)
+
+const outputCsvPath = path.join("assets", "myg2p-dict-mlcts.csv")
+Deno.writeTextFileSync(outputCsvPath, '')
+const outputCsv = Deno.openSync(outputCsvPath, { append: true })
+const textEncoder = new TextEncoder()
+
+for i of [0...entriesLength]
+    progressBar.update(i + 1)
+    entriesToBeProcessed[i]
+    |> convertRow |> function (r) do [r]
+    |> stringify
+    |> textEncoder.encode |> outputCsv.writeSync
+
+outputCsv.close()
+progressBar.stop(); console.log "[*] Done generating MLCTS dict."

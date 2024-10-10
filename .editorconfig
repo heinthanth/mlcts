@@ -1,3 +1,6 @@
 [*.rs]
 indent_size = 2
 indent_style = space
+
+[*.civet]
+indent_size = 4

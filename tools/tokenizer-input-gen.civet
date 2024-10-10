@@ -1,0 +1,110 @@
+
+import * as path from "jsr:@std/path"
+import { stringify, parse } from "jsr:@std/csv"
+
+const csvPath = path.join("assets", "myg2p-dict-mlcts.csv")
+
+// read CSV file
+const parsedCsv = csvPath
+    |> Deno.readTextFileSync
+    |> parse
+
+// extract single consonant from a row
+function extractSingleConsonant(row: string[]): string[]
+    const burmeseSyllables = row[3].split("|")
+    const mlctsSyllables = row[4].split("|")
+    
+    mlctsSyllables
+    |> .map((x: string, i: number) => [x, i])
+    |> .map(([x, i]) => [x, burmeseSyllables[i]])
+
+// make the first letter uppercase
+function capitalizeFirstLetter(s: string): string
+    return s.charAt(0).toUpperCase() + s.slice(1)
+
+// extract consonant and medial diacritic
+function extractConsonant(b: string, m: string): (string|undefined)[]
+    if m == "a."
+        return ["A", undefined]
+
+    m = m.replace("a.", "")
+
+    if b.includes("ျွှ")
+        m.slice(1, -2)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Hyw"]
+    else if b.includes("ြွှ")
+        m.slice(1, -2)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Ryw"]
+    else if b.includes("ွှ")
+        m.slice(1, -1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Hw"]
+    else if b.includes("ျှ")
+        m.slice(1, -1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Hy"]
+    else if b.includes("ြှ")
+        m.slice(1, -1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Ry"]
+    else if b.includes("ျွ")
+        m.slice(0, -2)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Hw"]
+    else if b.includes("ြွ")
+        m.slice(0, -2)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Rw"]
+    else if b.includes("ှ")
+        m.slice(1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "H"]
+    else if b.includes("ျ")
+        m.slice(0, -1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "Y"]
+    else if b.includes("ြ")
+        m.slice(0, -1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "R"]
+    else if b.includes("ွ")
+        m.slice(0, -1)
+            |> capitalizeFirstLetter
+            |> function (c) do [c, "W"]
+    else
+        m
+            |> capitalizeFirstLetter
+            |> function (c) do [c, undefined]
+
+// convert row into input format
+function convertRow(inputClass: string, b: string, m: string): string[]
+    . inputClass
+    . b,
+    . m
+    . ...extractConsonant(b, m)
+    . "A"
+    . undefined
+    . "Creaky"
+
+const singleConsonantInput = parsedCsv
+    |> .flatMap(extractSingleConsonant)
+    |> .filter(([x, ]: [string,number]) => x.endsWith("a."))
+    |> .reduce((acc, cur) => { ...acc, [cur[0]]: cur[1] }, {})
+    |> Object.entries
+    |> .map(([k, v]) => [k, v.replace(/ /g, "")])
+
+const outputPath = path.join("tests", "t_tokenizer_inputs_single.csv")
+const outputFile = Deno.openSync(outputPath, { write: true, create: true })
+const textEncoder = new TextEncoder()
+
+const header = "class,input_burmese,input_mlcts,consonant,medial_diacritic,vowel,virama,tone\n"
+outputFile.write(textEncoder.encode(header))
+
+singleConsonantInput
+    |> .map(([k, v]) => convertRow("consonant", v, k))
+    |> stringify
+    |> textEncoder.encode |> outputFile.writeSync
+
+outputFile.close()

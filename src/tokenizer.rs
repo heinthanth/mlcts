@@ -657,7 +657,7 @@ impl<'i> Tokenizer<'i>
         self.advance();
         Consonant::simple(BasicConsonant::Hp)
       }
-      'n' => match self.peek()
+      'n' => match self.peek_next()
       {
         'g' =>
         {
@@ -712,6 +712,12 @@ impl<'i> Tokenizer<'i>
         self.advance();
         Consonant::with_medial(BasicConsonant::W, MedialDiacritic::H)
       }
+      's' =>
+      {
+        // consume 's'
+        self.advance();
+        Consonant::with_medial(BasicConsonant::S, MedialDiacritic::H)
+      }
       _ => Consonant::simple(BasicConsonant::H),
     }
   }
@@ -741,25 +747,22 @@ impl<'i> Tokenizer<'i>
         }
         _ => Consonant::simple(BasicConsonant::G),
       },
-      'n' =>
+      'n' => match self.peek()
       {
-        match self.peek()
+        'g' =>
         {
-          'g' =>
-          {
-            // consume 'g'
-            self.advance();
-            Consonant::simple(BasicConsonant::Ng)
-          }
-          'y' =>
-          {
-            // consume 'y'
-            self.advance();
-            Consonant::simple(BasicConsonant::Ny)
-          }
-          _ => Consonant::simple(BasicConsonant::N),
+          // consume 'g'
+          self.advance();
+          Consonant::simple(BasicConsonant::Ng)
         }
-      }
+        'y' =>
+        {
+          // consume 'y'
+          self.advance();
+          Consonant::simple(BasicConsonant::Ny)
+        }
+        _ => Consonant::simple(BasicConsonant::N),
+      },
       'c' => Consonant::simple(BasicConsonant::C),
       'j' => match self.peek()
       {
@@ -823,6 +826,7 @@ impl<'i> Tokenizer<'i>
         | BasicConsonant::Hp
         | BasicConsonant::B
         | BasicConsonant::M
+        | BasicConsonant::Y
         | BasicConsonant::L
         | BasicConsonant::S
     ) && self.peek() == 'y'
@@ -849,10 +853,12 @@ impl<'i> Tokenizer<'i>
         | BasicConsonant::G
         | BasicConsonant::Gh
         | BasicConsonant::Ng
+        | BasicConsonant::D
         | BasicConsonant::P
         | BasicConsonant::Hp
         | BasicConsonant::B
         | BasicConsonant::M
+        | BasicConsonant::T
     ) && self.peek() == 'r'
     {
       let combined_medial = MedialDiacritic::combine_medial_diacritics(

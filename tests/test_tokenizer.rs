@@ -13,7 +13,7 @@ mod tests
     input_burmese: String,
     input_mlcts: String,
     consonant: BasicConsonant,
-    medial_diactric: Option<MedialDiacritic>,
+    medial_diacritic: Option<MedialDiacritic>,
     vowel: BasicVowel,
     virama: Option<Virama>,
     tone: Option<Tone>,
@@ -23,7 +23,7 @@ mod tests
   {
     let test_input_path = Path::new(env!("CARGO_MANIFEST_DIR"))
       .join("tests")
-      .join("t_tokenizer_inputs.csv");
+      .join("t_tokenizer_inputs_single.csv");
 
     let mut rdr = csv::Reader::from_path(test_input_path).unwrap();
     rdr.deserialize().into_iter().map(|r| r.unwrap()).collect()
@@ -42,12 +42,10 @@ mod tests
       let mut tokenizer = Tokenizer::new(&test.input_mlcts);
       let token = tokenizer.next_token();
 
-      println!("testing: {:?}", test.input_mlcts);
-      println!("token: {:?}", token);
       assert_eq!(
         token.kind,
         TokenKind::Syllable(Syllable::new(
-          Consonant::simple(test.consonant),
+          Consonant::new(test.consonant, test.medial_diacritic),
           Vowel::new(test.vowel, test.virama, test.tone)
         ))
       );
