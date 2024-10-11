@@ -1,0 +1,7 @@
+[tasks.myg2p-mlcts]
+command = "cargo"
+args = ["run", "--features", "dev-tools", "--bin", "prepare-myg2p-mlcts", "--", "${@}"]
+
+[tasks.tokenizer-inputs]
+command = "cargo"
+args = ["run", "--features", "dev-tools", "--bin", "prepare-tokenizer-inputs", "--", "${@}"]

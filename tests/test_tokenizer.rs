@@ -5,17 +5,19 @@ use mlcts::core::*;
 use mlcts::tokenizer::*;
 
 lazy_static! {
-  static ref consonant_tests: Vec<TokenizerInput> = get_tokenizer_inputs()
-    .into_iter()
-    .collect::<Vec<TokenizerInput>>();
+  static ref consonant_tests: Vec<TokenizerInput> =
+    get_tokenizer_single_syllable_inputs()
+      .into_iter()
+      .collect::<Vec<TokenizerInput>>();
 }
 
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, serde::Deserialize)]
 struct TokenizerInput
 {
-  class: String,
-  input_myanmar: String,
-  input_mlcts: String,
+  input_class: String,
+  #[allow(dead_code)]
+  myanmar_syllable: String,
+  mlcts_syllable: String,
   consonant: BasicConsonant,
   medial_diacritic: Option<MedialDiacritic>,
   vowel: BasicVowel,
@@ -72,11 +74,11 @@ mod tests
 }
 
 /// Get the test inputs for the tokenizer.
-fn get_tokenizer_inputs() -> Vec<TokenizerInput>
+fn get_tokenizer_single_syllable_inputs() -> Vec<TokenizerInput>
 {
   let test_input_path = Path::new(env!("CARGO_MANIFEST_DIR"))
     .join("tests")
-    .join("t_tokenizer_inputs_single.csv");
+    .join("t_tokenizer_inputs_single_syllable.csv");
 
   let mut rdr = csv::Reader::from_path(test_input_path).unwrap();
   rdr.deserialize().into_iter().map(|r| r.unwrap()).collect()
@@ -87,13 +89,13 @@ fn test_syllable(input_class: &str)
 {
   for test in consonant_tests
     .iter()
-    .filter(|input| input.class == input_class)
+    .filter(|input| input.input_class == input_class)
   {
     let expected_c = Consonant::new(test.consonant, test.medial_diacritic);
     let expected_v = Vowel::new(test.vowel, test.virama, test.tone);
     let expected = TokenKind::Syllable(Syllable::new(expected_c, expected_v));
 
-    let mut tokenizer = Tokenizer::new(&test.input_mlcts);
+    let mut tokenizer = Tokenizer::new(&test.mlcts_syllable);
     let token = tokenizer.next_token();
 
     assert_eq!(token.kind, expected);
