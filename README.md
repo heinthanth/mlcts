@@ -20,6 +20,25 @@ Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am 
 - [Rust compiler](https://www.rust-lang.org/): I use nightly. Stable channel might work too.
 - [cargo-make](https://mise.jdx.dev/): Task runner (optional)
 
+## Some Helpers
+
+Run tests:
+
+```
+cargo make test
+```
+
+Run tests for specific component:
+
+```
+cargo make test-$component
+
+# example
+cargo make test-tokenizer
+```
+
+Note: Running tokenizer test will download `myG2P` dictionary and use it as input.
+
 ## Acknowledgement
 
 I'd like to express my gratitude to the following projects. Without them, testing this library would have been much more difficult, if not impossible:

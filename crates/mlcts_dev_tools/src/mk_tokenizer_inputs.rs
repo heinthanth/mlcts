@@ -17,8 +17,10 @@ pub struct MyG2pMlcTsRow
 fn main()
 {
   let sg_syllable_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    .join("..")
+    .join("mlcts_tokenizer")
     .join("tests")
-    .join("t_tokenizer_inputs_single_syllable.csv");
+    .join("inputs_single_syllable.csv");
 
   let g2p_mlcts_dict = load_g2p_mlcts_dict();
   gen_single_syllable_test_inputs(&sg_syllable_path, &g2p_mlcts_dict);
@@ -100,7 +102,7 @@ fn gen_single_syllable_test_inputs(
     "A",
     None,
     None,
-    None,
+    Some(|_, mm_input| mm_input != "နျာ"),
   );
 
   // vowel 'a:' with high tone
@@ -112,7 +114,7 @@ fn gen_single_syllable_test_inputs(
     "A",
     None,
     Some("High"),
-    Some(|inp: &str| !inp.contains("yauka")),
+    Some(|inp: &str, _| !inp.contains("yauka")),
   );
 
   // vowel 'ak'
@@ -160,7 +162,7 @@ fn gen_single_syllable_test_inputs(
     "A",
     Some("P"),
     None,
-    Some(|inp| !inp.contains("kywanap")),
+    Some(|inp, _| !inp.contains("kywanap")),
   );
 }
 
@@ -185,14 +187,16 @@ fn extract_vowel_and_generate_input(
   vowel_enum: &str,
   virama: Option<&str>,
   tone: Option<&str>,
-  additional_filter_fn: Option<fn(&str) -> bool>,
+  additional_filter_fn: Option<fn(&str, &str) -> bool>,
 )
 {
   for (mlcts_syllable, myanmar_syllable) in syllables
     .iter()
     .filter(|(mlcts_input, _)| mlcts_input.ends_with(mlcts_vowel))
-    .filter(|(mlcts_input, _)| {
-      additional_filter_fn.map(|f| f(mlcts_input)).unwrap_or(true)
+    .filter(|(mlcts_input, mm_input)| {
+      additional_filter_fn
+        .map(|f| f(mlcts_input, mm_input))
+        .unwrap_or(true)
     })
   {
     let (consonant, medial_diacritic) = extract_consonant_from_mlcts(
@@ -365,6 +369,8 @@ fn extract_consonant_from_mlcts(
 fn load_g2p_mlcts_dict() -> Vec<MyG2pMlcTsRow>
 {
   let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    .join("..")
+    .join("..")
     .join("assets")
     .join("myg2p-dict-mlcts.csv");
 

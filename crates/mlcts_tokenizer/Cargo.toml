@@ -1,0 +1,13 @@
+[package]
+name = "mlcts_tokenizer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mlcts_core = { path = "../mlcts_core" }
+
+[dev-dependencies]
+rstest = "0.23.0"
+serde = { version = "1.0.210", features = ["derive"] }
+mlcts_proc_macros = { path = "../mlcts_proc_macros" }
+serde_plain = "1.0.2"

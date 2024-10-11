@@ -228,12 +228,12 @@ impl Consonant
 #[macro_export]
 macro_rules! consonant {
   ($name:ident) => {
-    $crate::core::Consonant::simple($crate::core::BasicConsonant::$name)
+    $crate::Consonant::simple($crate::BasicConsonant::$name)
   };
   ($name:ident, $medial:ident) => {
-    $crate::core::Consonant::with_medial(
-      $crate::core::BasicConsonant::$name,
-      $crate::core::MedialDiacritic::$medial,
+    $crate::Consonant::with_medial(
+      $crate::BasicConsonant::$name,
+      $crate::MedialDiacritic::$medial,
     )
   };
 }
@@ -401,25 +401,25 @@ impl Vowel
 #[macro_export]
 macro_rules! vowel {
   ($name:ident) => {
-    $crate::core::Vowel::simple($crate::core::BasicVowel::$name)
+    $crate::Vowel::simple($crate::BasicVowel::$name)
   };
   ($name:ident; $tone:ident) => {
-    $crate::core::Vowel::with_tone(
-      $crate::core::BasicVowel::$name,
-      Some($crate::core::Tone::$tone),
+    $crate::Vowel::with_tone(
+      $crate::BasicVowel::$name,
+      Some($crate::Tone::$tone),
     )
   };
   ($name:ident, $virama:ident) => {
-    $crate::core::Vowel::with_virama(
-      $crate::core::BasicVowel::$name,
-      $crate::core::Virama::$virama,
+    $crate::Vowel::with_virama(
+      $crate::BasicVowel::$name,
+      $crate::Virama::$virama,
     )
   };
   ($name:ident, $virama:ident; $tone:ident) => {
-    $crate::core::Vowel::new(
-      $crate::core::BasicVowel::$name,
-      Some($crate::core::Virama::$virama),
-      Some($crate::core::Tone::$tone),
+    $crate::Vowel::new(
+      $crate::BasicVowel::$name,
+      Some($crate::Virama::$virama),
+      Some($crate::Tone::$tone),
     )
   };
 }
@@ -477,9 +477,9 @@ impl Syllable
 #[macro_export]
 macro_rules! syllable {
   ($vowel:expr) => {
-    $crate::core::Syllable::with_vowel($vowel)
+    $crate::Syllable::with_vowel($vowel)
   };
   ($consonant:expr, $vowel:expr) => {
-    $crate::core::Syllable::new($consonant, $vowel)
+    $crate::Syllable::new($consonant, $vowel)
   };
 }

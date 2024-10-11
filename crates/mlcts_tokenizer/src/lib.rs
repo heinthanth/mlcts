@@ -1,7 +1,6 @@
 use std::str::Chars;
 
-use crate::{core::*, syllable};
-use crate::{consonant, vowel};
+use mlcts_core::*;
 
 pub(crate) const EOF_CHAR: char = '\0';
 

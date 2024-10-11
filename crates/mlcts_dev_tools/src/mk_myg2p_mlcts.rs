@@ -30,6 +30,8 @@ fn main()
   deno_eval(&mut deno_rt, libs.clone());
 
   let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+    .join("..")
+    .join("..")
     .join("assets")
     .join("myg2p-dict-mlcts.csv");
 
@@ -161,10 +163,12 @@ fn get_js_code(filename: &str) -> String
 fn get_original_dict(download: bool) -> String
 {
   let dict_path = Path::new(env!("CARGO_MANIFEST_DIR"))
+  .join("..")
+  .join("..")
     .join("assets")
     .join("myg2p-dict.txt");
 
-  if !download
+  if !download && dict_path.exists()
   {
     return std::fs::read_to_string(&dict_path).unwrap();
   }

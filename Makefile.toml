@@ -1,7 +1,21 @@
+[config]
+default_to_workspace = false
+
 [tasks.myg2p-mlcts]
 command = "cargo"
-args = ["run", "--features", "dev-tools", "--bin", "prepare-myg2p-mlcts", "--", "${@}"]
+args = ["run", "-p", "mlcts_dev_tools", "--bin", "mk-myg2p-mlcts", "${@}"]
 
 [tasks.tokenizer-inputs]
 command = "cargo"
-args = ["run", "--features", "dev-tools", "--bin", "prepare-tokenizer-inputs", "--", "${@}"]
+args = ["run", "-p", "mlcts_dev_tools", "--bin", "mk-tokenizer-inputs", "${@}"]
+dependencies = ["myg2p-mlcts"]
+
+[tasks.test-tokenizer]
+command = "cargo"
+args = ["test", "-p", "mlcts_tokenizer", "${@}"]
+dependencies = ["tokenizer-inputs"]
+
+[tasks.test]
+command = "cargo"
+args = ["test", "${@}"]
+dependencies = ["tokenizer-inputs"]
