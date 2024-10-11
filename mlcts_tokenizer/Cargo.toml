@@ -1,0 +1,7 @@
+[package]
+name = "mlcts_tokenizer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mlcts_core = { path = "../mlcts_core" }

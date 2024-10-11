@@ -31,7 +31,6 @@ fn main()
 
   let output_path = Path::new(env!("CARGO_MANIFEST_DIR"))
     .join("..")
-    .join("..")
     .join("assets")
     .join("myg2p-dict-mlcts.csv");
 
@@ -163,8 +162,7 @@ fn get_js_code(filename: &str) -> String
 fn get_original_dict(download: bool) -> String
 {
   let dict_path = Path::new(env!("CARGO_MANIFEST_DIR"))
-  .join("..")
-  .join("..")
+    .join("..")
     .join("assets")
     .join("myg2p-dict.txt");
 

@@ -41,8 +41,10 @@ fn collect_single_syllables<'i>(
 {
   dict
     .iter()
+    // exclude stacked consonants
+    .filter(|row| !row.myanmar_word.contains("္"))
     .flat_map(|row| {
-      row
+     row
         .mlcts_syllables
         .split("|")
         .into_iter()
@@ -76,6 +78,7 @@ fn gen_single_syllable_test_inputs(
       "vowel",
       "virama",
       "tone",
+      // "context",
     ])
     .unwrap();
 
@@ -215,6 +218,7 @@ fn extract_vowel_and_generate_input(
         vowel_enum,
         virama.unwrap_or(""),
         tone.unwrap_or(""),
+        // myanmar_syllable,
       ])
       .unwrap();
   }
@@ -369,7 +373,6 @@ fn extract_consonant_from_mlcts(
 fn load_g2p_mlcts_dict() -> Vec<MyG2pMlcTsRow>
 {
   let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-    .join("..")
     .join("..")
     .join("assets")
     .join("myg2p-dict-mlcts.csv");
