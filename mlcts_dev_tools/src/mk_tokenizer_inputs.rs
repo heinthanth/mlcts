@@ -41,14 +41,13 @@ fn collect_single_syllables<'i>(
 {
   dict
     .iter()
-    // exclude stacked consonants
-    .filter(|row| !row.myanmar_word.contains("္"))
     .flat_map(|row| {
-     row
+      row
         .mlcts_syllables
         .split("|")
         .into_iter()
         .zip(row.myanmar_syllables.split("|"))
+        .filter(|(mlcts_inp, _)| *mlcts_inp != "INVALID")
         .collect::<Vec<_>>()
     })
     .collect::<HashSet<_>>()
@@ -117,7 +116,7 @@ fn gen_single_syllable_test_inputs(
     "A",
     None,
     Some("High"),
-    Some(|inp: &str, _| !inp.contains("yauka")),
+    None,
   );
 
   // vowel 'ak'
@@ -165,7 +164,7 @@ fn gen_single_syllable_test_inputs(
     "A",
     Some("P"),
     None,
-    Some(|inp, _| !inp.contains("kywanap")),
+    None,
   );
 }
 

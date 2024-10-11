@@ -1,2 +1,4 @@
-inputs*.csv
+# generated test files and inputs are stored here
+
 tests.rs
+inputs*.csv

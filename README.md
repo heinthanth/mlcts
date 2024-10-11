@@ -15,29 +15,14 @@ Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am 
 - [ ] Stacked consonant recognition
 - [ ] Ambiguity resolver (Resolve ambiguous MLCTS token to correct Myanmar script )
 
-## Required Tools
+## Development
 
-- [Rust compiler](https://www.rust-lang.org/): I use nightly. Stable channel might work too.
-- [cargo-make](https://mise.jdx.dev/): Task runner (optional)
+You will need the following:
 
-## Some Helpers
+- [Rust compiler](https://www.rust-lang.org/)
+- [cargo-make](https://mise.jdx.dev/) (Optional)
 
-Run tests:
-
-```
-cargo make test
-```
-
-Run tests for specific component:
-
-```
-cargo make test-$component
-
-# example
-cargo make test-tokenizer
-```
-
-Note: Running tokenizer test will download `myG2P` dictionary and use it as input.
+See [Makefile.toml](Makefile.toml) for available Makefile tasks (scripts).
 
 ## Acknowledgement
 

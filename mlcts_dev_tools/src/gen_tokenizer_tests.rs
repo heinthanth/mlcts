@@ -90,9 +90,10 @@ fn gen_single_syllable_test(row: StringRecord) -> TokenStream
 
   let f_ident = Ident::new(
     format!(
-      "single_syllable_test_{}_{}",
+      "single_syllable_test_{}{}",
       i.replace(".", "_dot").replace(":", "_colon"),
-      generate_random_string(8).to_ascii_lowercase()
+      (format!("_{}", generate_random_string(8))).to_ascii_lowercase(),
+      // ""
     )
     .as_str(),
     proc_macro2::Span::call_site(),

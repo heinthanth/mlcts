@@ -263,20 +263,34 @@ pub enum Virama
 {
   /// က်
   K,
+  /// ဂ်
+  G,
   /// င်
   Ng,
   /// စ်
   C,
+  /// ဇ်
+  J,
   /// ည် or ဉ်
   Ny,
   /// ဋ် or တ်
   T,
+  /// ထ်
+  Ht,
+  /// ဒ်
+  D,
   /// ဏ် or န်
   N,
   /// ပ်
   P,
+  /// ဗ်
+  B,
   /// မ် or ံ
   M,
+  /// သ်
+  S,
+  /// လ်
+  L,
 }
 
 /// Represents a basic vowel letter in the Myanmar script.

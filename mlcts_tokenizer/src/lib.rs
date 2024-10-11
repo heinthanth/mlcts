@@ -218,6 +218,38 @@ impl<'i> Tokenizer<'i>
     peek.next().unwrap_or(EOF_CHAR)
   }
 
+  /// Peek the next next character from the input iterator without
+  /// advancing the iterator. This will return `EOF_CHAR` if the
+  /// iterator has reached the end of the input.
+  ///
+  /// # Returns
+  ///
+  /// The next next character from the input iterator.
+  fn peek_next_next(&self) -> char
+  {
+    let mut peek = self.input.clone();
+    peek.next();
+    peek.next();
+    peek.next().unwrap_or(EOF_CHAR)
+  }
+
+  /// Peek the next next next character from the input iterator without
+  /// advancing the iterator. This will return `EOF_CHAR` if the
+  /// iterator has reached the end of the input.
+  ///
+  /// # Returns
+  ///
+  /// The next next next character from the input iterator.
+  fn peek_next_next_next_next(&self) -> char
+  {
+    let mut peek = self.input.clone();
+    peek.next();
+    peek.next();
+    peek.next();
+    peek.next();
+    peek.next().unwrap_or(EOF_CHAR)
+  }
+
   /// Parse a whitespace token.
   /// This will consume all the whitespace characters from the input.
   ///
@@ -276,335 +308,196 @@ impl<'i> Tokenizer<'i>
     }
   }
 
-  /// Parse the vowel 'i' and following tone, virama to get the vowel part.
+  /// Parse virama, stacked consonants and tone if exists.
   ///
   /// # Returns
   ///
-  /// A valid vowel part.
-  fn parse_vowel_i(&mut self) -> Vowel
+  /// a vowel part.
+  fn parse_virama_and_tone(&mut self, original_vowel: BasicVowel) -> Vowel
   {
-    match self.peek()
+    match (
+      self.peek(),
+      self.peek_next(),
+      self.peek_next_next(),
+      self.peek_next_next_next_next(),
+    )
     {
-      ':' =>
-      {
-        // consume ':'
-        self.advance();
-        return vowel!(I; High);
-      }
-      '.' =>
+      ('.', ..) =>
       {
         // consume '.'
         self.advance();
-        return vowel!(I; Creaky);
+        return Vowel::new(original_vowel, None, Some(Tone::Creaky));
       }
-      't' =>
-      {
-        // consume 't'
-        self.advance();
-        // 'it' can't have a tone mark
-        return vowel!(I, T);
-      }
-      'p' =>
-      {
-        // consume 'p'
-        self.advance();
-        // 'ip' can't have a tone mark
-        return vowel!(I, P);
-      }
-      'n' =>
-      {
-        // consume 'n'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::I, Some(Virama::N), tone);
-      }
-      'm' =>
-      {
-        // consume 'm'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::I, Some(Virama::M), tone);
-      }
-      _ => vowel!(I),
-    }
-  }
-
-  /// Parse the vowel 'ui' and following tone, virama to get the vowel part.
-  ///
-  /// # Returns
-  ///
-  /// A valid vowel part.
-  fn parse_vowel_ui(&mut self) -> Vowel
-  {
-    match self.peek()
-    {
-      ':' =>
+      (':', ..) =>
       {
         // consume ':'
         self.advance();
-        return vowel!(Ui; High);
+        return Vowel::new(original_vowel, None, Some(Tone::High));
       }
-      '.' =>
-      {
-        // consume '.'
-        self.advance();
-        return vowel!(Ui; Creaky);
-      }
-      'k' =>
-      {
-        // consume 'k'
-        self.advance();
-        // 'uik' can't have a tone mark
-        return vowel!(Ui, K);
-      }
-      c if c == 'n' && self.peek_next() == 'g' =>
-      {
-        // consume 'n' and 'g'
-        self.advance();
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::Ui, Some(Virama::Ng), tone);
-      }
-      _ => vowel!(Ui),
-    }
-  }
-
-  /// Parse the vowel 'u' and following tone, virama to get the vowel part.
-  ///
-  /// # Returns
-  ///
-  /// A valid vowel part.
-  fn parse_vowel_u(&mut self) -> Vowel
-  {
-    match self.peek()
-    {
-      ':' =>
-      {
-        // consume ':'
-        self.advance();
-        return vowel!(U; High);
-      }
-      '.' =>
-      {
-        // consume '.'
-        self.advance();
-        return vowel!(U; Creaky);
-      }
-      'i' =>
-      {
-        // consume 'i'
-        self.advance();
-        return self.parse_vowel_ui();
-      }
-      't' =>
-      {
-        // consume 't'
-        self.advance();
-        // 'ut' can't have a tone mark
-        return vowel!(U, T);
-      }
-      'p' =>
-      {
-        // consume 'p'
-        self.advance();
-        // 'up' can't have a tone mark
-        return vowel!(U, P);
-      }
-      'n' =>
-      {
-        // consume 'n'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::U, Some(Virama::N), tone);
-      }
-      'm' =>
-      {
-        // consume 'm'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::U, Some(Virama::M), tone);
-      }
-      _ => vowel!(U),
-    }
-  }
-
-  /// Parse the vowel 'e' and following tone, virama to get the vowel part.
-  ///
-  /// # Returns
-  ///
-  /// A valid vowel part.
-  fn parse_vowel_e(&mut self) -> Vowel
-  {
-    match self.peek()
-    {
-      ':' =>
-      {
-        // consume ':'
-        self.advance();
-        return vowel!(E; High);
-      }
-      '.' =>
-      {
-        // consume '.'
-        self.advance();
-        return vowel!(E; Creaky);
-      }
-      _ => vowel!(E),
-    }
-  }
-
-  /// Parse the vowel 'au' and following tone, virama to get the vowel part.
-  ///
-  /// # Returns
-  ///
-  /// A valid vowel part.
-  fn parse_vowel_au(&mut self) -> Vowel
-  {
-    match self.peek()
-    {
-      ':' =>
-      {
-        // consume ':'
-        self.advance();
-        return vowel!(Au; High);
-      }
-      '.' =>
-      {
-        // consume '.'
-        self.advance();
-        return vowel!(Au; Creaky);
-      }
-      'k' =>
-      {
-        // consume 'k'
-        self.advance();
-        // 'auk' can't have a tone mark
-        return vowel!(Au, K);
-      }
-      c if c == 'n' && self.peek_next() == 'g' =>
-      {
-        // consume 'n' and 'g'
-        self.advance();
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::Au, Some(Virama::Ng), tone);
-      }
-      _ => vowel!(Au),
-    }
-  }
-
-  /// Parse the vowel 'an' and following tone, virama to get the vowel part.
-  ///
-  /// # Returns
-  ///
-  /// A valid vowel part.
-  fn parse_vowel_an(&mut self) -> Vowel
-  {
-    match self.peek()
-    {
-      ':' =>
-      {
-        // consume ':'
-        self.advance();
-        return Vowel::new(BasicVowel::A, Some(Virama::N), Some(Tone::High));
-      }
-      '.' =>
-      {
-        // consume '.'
-        self.advance();
-        return Vowel::new(BasicVowel::A, Some(Virama::N), Some(Tone::Creaky));
-      }
-      'g' =>
-      {
-        // consume 'g'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::A, Some(Virama::Ng), tone);
-      }
-      'y' =>
-      {
-        // consume 'y'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::A, Some(Virama::Ny), tone);
-      }
-      _ => vowel!(A, N),
-    }
-  }
-
-  /// Parse the vowel 'a' and following tone, virama to get the vowel part.
-  ///
-  /// # Returns
-  ///
-  /// A valid vowel part.
-  fn parse_vowel_a(&mut self) -> Vowel
-  {
-    match self.peek()
-    {
-      ':' =>
-      {
-        // consume ':'
-        self.advance();
-        return vowel!(A; High);
-      }
-      '.' =>
-      {
-        // consume '.'
-        self.advance();
-        return vowel!(A; Creaky);
-      }
-      'k' =>
+      ('k', ..) =>
       {
         // consume 'k'
         self.advance();
         // 'ak' can't have a tone mark
-        return vowel!(A, K);
+        return Vowel::new(original_vowel, Some(Virama::K), None);
       }
-      'c' =>
+      ('g', 'g', 'h', ..) | ('g', 'g', ..) =>
+      {
+        // consume 'g'
+        self.advance();
+        // 'ag' might be a stacked consonant
+        return Vowel::new(original_vowel, Some(Virama::G), None);
+      }
+      ('c', ..) =>
       {
         // consume 'c'
         self.advance();
         // 'ac' can't have a tone mark
-        return vowel!(A, C);
+        return Vowel::new(original_vowel, Some(Virama::C), None);
       }
-      't' =>
+      ('j', 'j', 'h', ..) | ('j', 'j', ..) =>
+      {
+        // consume 'j'
+        self.advance();
+        // 'aj' might be a stacked consonant
+        return Vowel::new(original_vowel, Some(Virama::J), None);
+      }
+      ('t', ..) =>
       {
         // consume 't'
         self.advance();
         // 'at' can't have a tone mark
-        return vowel!(A, T);
+        return Vowel::new(original_vowel, Some(Virama::T), None);
       }
-      'p' =>
+      ('h', 't', 'h', 't') =>
+      {
+        // consume 'h'
+        self.advance();
+        // consume 't'
+        self.advance();
+        // 'aht' might be a stacked consonant
+        return Vowel::new(original_vowel, Some(Virama::Ht), None);
+      }
+      ('d', 'd', 'h', ..) | ('d', 'd', ..) =>
+      {
+        // consume 'd'
+        self.advance();
+        // 'ad' might be a stacked consonant
+        return Vowel::new(original_vowel, Some(Virama::D), None);
+      }
+      ('p', ..) =>
       {
         // consume 'p'
         self.advance();
         // 'ap' can't have a tone mark
-        return vowel!(A, P);
+        return Vowel::new(original_vowel, Some(Virama::P), None);
       }
-      'm' =>
+      ('b', 'b', 'h', ..) | ('b', 'b', ..) =>
+      {
+        // consume 'b'
+        self.advance();
+        return Vowel::new(original_vowel, Some(Virama::B), None);
+      }
+      ('m', ..) =>
       {
         // consume 'm'
         self.advance();
         let tone = self.parse_tone();
-        return Vowel::new(BasicVowel::A, Some(Virama::M), tone);
+        return Vowel::new(original_vowel, Some(Virama::M), tone);
       }
-      'u' =>
-      {
-        // consume 'u'
-        self.advance();
-        return self.parse_vowel_au();
-      }
-      'n' =>
+      ('n', '.', ..) =>
       {
         // consume 'n'
         self.advance();
-        return self.parse_vowel_an();
+        // consume '.'
+        self.advance();
+        let tone = self.parse_tone();
+        return Vowel::new(original_vowel, Some(Virama::N), tone);
       }
-      _ => vowel!(A),
+      ('n', ':', ..) =>
+      {
+        // consume 'n'
+        self.advance();
+        // consume ':'
+        self.advance();
+        let tone = self.parse_tone();
+        return Vowel::new(original_vowel, Some(Virama::N), tone);
+      }
+      ('n', 'g', ..) =>
+      {
+        // consume 'n'
+        self.advance();
+        // consume 'g'
+        self.advance();
+        let tone = self.parse_tone();
+        return Vowel::new(original_vowel, Some(Virama::Ng), tone);
+      }
+      ('n', 'y', ..) =>
+      {
+        // consume 'n'
+        self.advance();
+        // consume 'y'
+        self.advance();
+        let tone = self.parse_tone();
+        return Vowel::new(original_vowel, Some(Virama::Ny), tone);
+      }
+      ('n', ..) =>
+      {
+        // consume 'n'
+        self.advance();
+        let tone = self.parse_tone();
+        return Vowel::new(original_vowel, Some(Virama::N), tone);
+      }
+      ('s', 's', ..) =>
+      {
+        // consume 's'
+        self.advance();
+        return Vowel::new(original_vowel, Some(Virama::S), None);
+      }
+      ('l', 'l', ..) =>
+      {
+        // consume 'l'
+        self.advance();
+        return Vowel::new(original_vowel, Some(Virama::L), None);
+      }
+      _ => Vowel::simple(original_vowel),
     }
   }
 
-  /// Parse vowel to get the syllable token.
+  /// Parse vowel based on the first character.
+  ///
+  /// # Arguments
+  ///
+  /// * `first_char` - The first vowel character.
+  ///
+  /// # Returns
+  ///
+  /// A vowel token if valid, otherwise an unknown token.
+  fn parse_vowel(&mut self, first_char: char) -> Vowel
+  {
+    match (first_char, self.peek())
+    {
+      ('a', 'u') =>
+      {
+        // consume 'u'
+        self.advance();
+        self.parse_virama_and_tone(BasicVowel::Au)
+      }
+      ('a', _) => self.parse_virama_and_tone(BasicVowel::A),
+      ('i', _) => self.parse_virama_and_tone(BasicVowel::I),
+      ('u', 'i') =>
+      {
+        // consume 'i'
+        self.advance();
+        self.parse_virama_and_tone(BasicVowel::Ui)
+      }
+      ('u', _) => self.parse_virama_and_tone(BasicVowel::U),
+      ('e', _) => self.parse_virama_and_tone(BasicVowel::E),
+      _ => unreachable!(),
+    }
+  }
+
+  /// Parse vowel syllable
   ///
   /// # Arguments
   ///
@@ -613,15 +506,9 @@ impl<'i> Tokenizer<'i>
   /// # Returns
   ///
   /// A syllable token if valid, otherwise an unknown token.
-  fn parse_vowel(&mut self, first_char: char) -> TokenKind
+  fn parse_vowel_syllable(&mut self, first_char: char) -> TokenKind
   {
-    TokenKind::Syllable(syllable!(match first_char
-    {
-      'i' => self.parse_vowel_i(),
-      'u' => self.parse_vowel_u(),
-      'e' => self.parse_vowel_e(),
-      _ => unreachable!(),
-    }))
+    TokenKind::Syllable(syllable!(self.parse_vowel(first_char)))
   }
 
   /// Handle the special case of 'h' which can form a medial consonant.
@@ -810,7 +697,7 @@ impl<'i> Tokenizer<'i>
     // no need to check for medial consonant and vowel.
     if consonant.basic == BasicConsonant::A
     {
-      let vowel = self.parse_vowel_a();
+      let vowel = self.parse_vowel('a');
       return TokenKind::Syllable(syllable!(vowel));
     }
 
@@ -905,33 +792,14 @@ impl<'i> Tokenizer<'i>
       consonant
     };
 
-    let vowel = match self.peek()
+    let vowel = if matches!(self.peek(), 'a' | 'i' | 'u' | 'e')
     {
-      'a' =>
-      {
-        // consume 'a'
-        self.advance();
-        Some(self.parse_vowel_a())
-      }
-      'i' =>
-      {
-        // consume 'i'
-        self.advance();
-        Some(self.parse_vowel_i())
-      }
-      'u' =>
-      {
-        // consume 'u'
-        self.advance();
-        Some(self.parse_vowel_u())
-      }
-      'e' =>
-      {
-        // consume 'e'
-        self.advance();
-        Some(self.parse_vowel_e())
-      }
-      _ => None,
+      let curr = self.advance().unwrap();
+      Some(self.parse_vowel(curr))
+    }
+    else
+    {
+      None
     };
 
     if vowel.is_none()
@@ -962,7 +830,7 @@ impl<'i> Tokenizer<'i>
     {
       'k' | 'h' | 'g' | 'n' | 'c' | 'j' | 't' | 'd' | 'p' | 'b' | 'm' | 'y'
       | 'r' | 'l' | 'w' | 's' | 'a' => self.parse_consonant(first_char),
-      'i' | 'u' | 'e' => self.parse_vowel(first_char),
+      'i' | 'u' | 'e' => self.parse_vowel_syllable(first_char),
       c if is_whitespace(c) => self.parse_whitespace(),
       _ => self.parse_unknown(),
     };
@@ -970,5 +838,19 @@ impl<'i> Tokenizer<'i>
     let token = Token::new(token_kind, self.start, self.consumed_len());
     self.reset_consumed_len();
     token
+  }
+}
+
+#[cfg(test)]
+mod tests
+{
+  use super::*;
+
+  #[test]
+  fn development_test()
+  {
+    let mut tokenizer = Tokenizer::new("wijja");
+    println!("{:?}", tokenizer.next_token());
+    println!("{:?}", tokenizer.next_token());
   }
 }

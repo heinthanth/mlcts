@@ -97,16 +97,29 @@ fn generate_mlcts(
   deno_rt: &mut JsRuntime,
 )
 {
+  let whole_word = mya2rom(row.0, deno_rt)
+    .split(" ")
+    .map(|s| s.to_string())
+    .collect::<Vec<String>>();
+
   csv_writer
     .write_record(&[
       row.0,
-      &mya2rom(row.0, deno_rt),
+      &whole_word.join(""),
       &row.1.len().to_string(),
       &row.1.join("|"),
       &row
         .1
         .iter()
-        .map(|&s| mya2rom(s, deno_rt))
+        .enumerate()
+        .map(|(i, s)| {
+          let romanization = mya2rom(s, deno_rt);
+          if i < whole_word.len() && romanization == whole_word[i]
+          {
+            return romanization;
+          }
+          return "INVALID".to_string();
+        })
         .collect::<Vec<String>>()
         .join("|"),
     ])
@@ -132,7 +145,6 @@ fn mya2rom(word: &str, deno_rt: &mut JsRuntime) -> String
     .unwrap()
     .replace("nhg", "hng") // fix nhg -> hng
     .replace("nhy", "hny") // fix nhy -> hny
-    .replace(" ", "")
 }
 
 /// Get required JS code from myanmaropenwordnet/mya2rom repo.
@@ -203,7 +215,11 @@ fn get_original_dict(download: bool) -> String
     std::thread::sleep(std::time::Duration::from_millis(5));
   }
 
-  let content = String::from_utf8(content).unwrap().replace("စျ", "ဈ");
+  let content = String::from_utf8(content)
+    .unwrap()
+    .replace("စျ", "ဈ")
+    .replace("မိစ်ဆာ", "မိစ္ဆာ")
+    .replace("ဒိဋ်ဌိ", "ဒိဋ္ဌိ");
 
   progress_bar.finish();
   println!("[*] done downloading the original dictionary");
