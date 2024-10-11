@@ -1,6 +1,7 @@
 use std::str::Chars;
 
-use crate::core::*;
+use crate::{core::*, syllable};
+use crate::{consonant, vowel};
 
 pub(crate) const EOF_CHAR: char = '\0';
 
@@ -289,27 +290,27 @@ impl<'i> Tokenizer<'i>
       {
         // consume ':'
         self.advance();
-        return Vowel::with_tone(BasicVowel::I, Some(Tone::High));
+        return vowel!(I; High);
       }
       '.' =>
       {
         // consume '.'
         self.advance();
-        return Vowel::with_tone(BasicVowel::I, Some(Tone::Creaky));
+        return vowel!(I; Creaky);
       }
       't' =>
       {
         // consume 't'
         self.advance();
         // 'it' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::I, Virama::T);
+        return vowel!(I, T);
       }
       'p' =>
       {
         // consume 'p'
         self.advance();
         // 'ip' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::I, Virama::P);
+        return vowel!(I, P);
       }
       'n' =>
       {
@@ -325,7 +326,7 @@ impl<'i> Tokenizer<'i>
         let tone = self.parse_tone();
         return Vowel::new(BasicVowel::I, Some(Virama::M), tone);
       }
-      _ => Vowel::simple(BasicVowel::I),
+      _ => vowel!(I),
     }
   }
 
@@ -342,20 +343,20 @@ impl<'i> Tokenizer<'i>
       {
         // consume ':'
         self.advance();
-        return Vowel::with_tone(BasicVowel::Ui, Some(Tone::High));
+        return vowel!(Ui; High);
       }
       '.' =>
       {
         // consume '.'
         self.advance();
-        return Vowel::with_tone(BasicVowel::Ui, Some(Tone::Creaky));
+        return vowel!(Ui; Creaky);
       }
       'k' =>
       {
         // consume 'k'
         self.advance();
         // 'uik' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::Ui, Virama::K);
+        return vowel!(Ui, K);
       }
       c if c == 'n' && self.peek_next() == 'g' =>
       {
@@ -365,7 +366,7 @@ impl<'i> Tokenizer<'i>
         let tone = self.parse_tone();
         return Vowel::new(BasicVowel::Ui, Some(Virama::Ng), tone);
       }
-      _ => Vowel::simple(BasicVowel::Ui),
+      _ => vowel!(Ui),
     }
   }
 
@@ -382,13 +383,13 @@ impl<'i> Tokenizer<'i>
       {
         // consume ':'
         self.advance();
-        return Vowel::with_tone(BasicVowel::U, Some(Tone::High));
+        return vowel!(U; High);
       }
       '.' =>
       {
         // consume '.'
         self.advance();
-        return Vowel::with_tone(BasicVowel::U, Some(Tone::Creaky));
+        return vowel!(U; Creaky);
       }
       'i' =>
       {
@@ -401,14 +402,14 @@ impl<'i> Tokenizer<'i>
         // consume 't'
         self.advance();
         // 'ut' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::U, Virama::T);
+        return vowel!(U, T);
       }
       'p' =>
       {
         // consume 'p'
         self.advance();
         // 'up' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::U, Virama::P);
+        return vowel!(U, P);
       }
       'n' =>
       {
@@ -424,7 +425,7 @@ impl<'i> Tokenizer<'i>
         let tone = self.parse_tone();
         return Vowel::new(BasicVowel::U, Some(Virama::M), tone);
       }
-      _ => Vowel::simple(BasicVowel::U),
+      _ => vowel!(U),
     }
   }
 
@@ -441,15 +442,15 @@ impl<'i> Tokenizer<'i>
       {
         // consume ':'
         self.advance();
-        return Vowel::with_tone(BasicVowel::E, Some(Tone::High));
+        return vowel!(E; High);
       }
       '.' =>
       {
         // consume '.'
         self.advance();
-        return Vowel::with_tone(BasicVowel::E, Some(Tone::Creaky));
+        return vowel!(E; Creaky);
       }
-      _ => Vowel::simple(BasicVowel::E),
+      _ => vowel!(E),
     }
   }
 
@@ -466,20 +467,20 @@ impl<'i> Tokenizer<'i>
       {
         // consume ':'
         self.advance();
-        return Vowel::with_tone(BasicVowel::Au, Some(Tone::High));
+        return vowel!(Au; High);
       }
       '.' =>
       {
         // consume '.'
         self.advance();
-        return Vowel::with_tone(BasicVowel::Au, Some(Tone::Creaky));
+        return vowel!(Au; Creaky);
       }
       'k' =>
       {
         // consume 'k'
         self.advance();
         // 'auk' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::Au, Virama::K);
+        return vowel!(Au, K);
       }
       c if c == 'n' && self.peek_next() == 'g' =>
       {
@@ -489,7 +490,7 @@ impl<'i> Tokenizer<'i>
         let tone = self.parse_tone();
         return Vowel::new(BasicVowel::Au, Some(Virama::Ng), tone);
       }
-      _ => Vowel::simple(BasicVowel::Au),
+      _ => vowel!(Au),
     }
   }
 
@@ -528,7 +529,7 @@ impl<'i> Tokenizer<'i>
         let tone = self.parse_tone();
         return Vowel::new(BasicVowel::A, Some(Virama::Ny), tone);
       }
-      _ => Vowel::with_virama(BasicVowel::A, Virama::N),
+      _ => vowel!(A, N),
     }
   }
 
@@ -545,41 +546,41 @@ impl<'i> Tokenizer<'i>
       {
         // consume ':'
         self.advance();
-        return Vowel::with_tone(BasicVowel::A, Some(Tone::High));
+        return vowel!(A; High);
       }
       '.' =>
       {
         // consume '.'
         self.advance();
-        return Vowel::with_tone(BasicVowel::A, Some(Tone::Creaky));
+        return vowel!(A; Creaky);
       }
       'k' =>
       {
         // consume 'k'
         self.advance();
         // 'ak' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::A, Virama::K);
+        return vowel!(A, K);
       }
       'c' =>
       {
         // consume 'c'
         self.advance();
         // 'ac' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::A, Virama::C);
+        return vowel!(A, C);
       }
       't' =>
       {
         // consume 't'
         self.advance();
         // 'at' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::A, Virama::T);
+        return vowel!(A, T);
       }
       'p' =>
       {
         // consume 'p'
         self.advance();
         // 'ap' can't have a tone mark
-        return Vowel::with_virama(BasicVowel::A, Virama::P);
+        return vowel!(A, P);
       }
       'm' =>
       {
@@ -600,7 +601,7 @@ impl<'i> Tokenizer<'i>
         self.advance();
         return self.parse_vowel_an();
       }
-      _ => Vowel::simple(BasicVowel::A),
+      _ => vowel!(A),
     }
   }
 
@@ -615,7 +616,7 @@ impl<'i> Tokenizer<'i>
   /// A syllable token if valid, otherwise an unknown token.
   fn parse_vowel(&mut self, first_char: char) -> TokenKind
   {
-    TokenKind::Syllable(Syllable::with_vowel(match first_char
+    TokenKind::Syllable(syllable!(match first_char
     {
       'i' => self.parse_vowel_i(),
       'u' => self.parse_vowel_u(),
@@ -637,25 +638,25 @@ impl<'i> Tokenizer<'i>
       {
         // consume 'k'
         self.advance();
-        Consonant::simple(BasicConsonant::Hk)
+        consonant!(Hk)
       }
       'c' =>
       {
         // consume 'c'
         self.advance();
-        Consonant::simple(BasicConsonant::Hc)
+        consonant!(Hc)
       }
       't' =>
       {
         // consume 't'
         self.advance();
-        Consonant::simple(BasicConsonant::Ht)
+        consonant!(Ht)
       }
       'p' =>
       {
         // consume 'p'
         self.advance();
-        Consonant::simple(BasicConsonant::Hp)
+        consonant!(Hp)
       }
       'n' => match self.peek_next()
       {
@@ -665,7 +666,7 @@ impl<'i> Tokenizer<'i>
           self.advance();
           // consume 'g'
           self.advance();
-          Consonant::with_medial(BasicConsonant::Ng, MedialDiacritic::H)
+          consonant!(Ng, H)
         }
         'y' =>
         {
@@ -673,52 +674,52 @@ impl<'i> Tokenizer<'i>
           self.advance();
           // consume 'y'
           self.advance();
-          Consonant::with_medial(BasicConsonant::Ny, MedialDiacritic::H)
+          consonant!(Ny, H)
         }
         _ =>
         {
           // consume 'n'
           self.advance();
-          Consonant::with_medial(BasicConsonant::N, MedialDiacritic::H)
+          consonant!(N, H)
         }
       },
       'm' =>
       {
         // consume 'm'
         self.advance();
-        Consonant::with_medial(BasicConsonant::M, MedialDiacritic::H)
+        consonant!(M, H)
       }
       'y' =>
       {
         // consume 'y'
         self.advance();
-        Consonant::with_medial(BasicConsonant::Y, MedialDiacritic::H)
+        consonant!(Y, H)
       }
       'r' =>
       {
         // consume 'r'
         self.advance();
-        Consonant::with_medial(BasicConsonant::R, MedialDiacritic::H)
+        consonant!(R, H)
       }
       'l' =>
       {
         // consume 'l'
         self.advance();
-        Consonant::with_medial(BasicConsonant::L, MedialDiacritic::H)
+        consonant!(L, H)
       }
       'w' =>
       {
         // consume 'w'
         self.advance();
-        Consonant::with_medial(BasicConsonant::W, MedialDiacritic::H)
+        consonant!(W, H)
       }
       's' =>
       {
         // consume 's'
         self.advance();
-        Consonant::with_medial(BasicConsonant::S, MedialDiacritic::H)
+        consonant!(S, H)
       }
-      _ => Consonant::simple(BasicConsonant::H),
+      _ => consonant!(H),
     }
   }
 
@@ -735,7 +736,7 @@ impl<'i> Tokenizer<'i>
   {
     let consonant = match first_char
     {
-      'k' => Consonant::simple(BasicConsonant::K),
+      'k' => consonant!(K),
       'h' => self.parse_consonant_h(),
       'g' => match self.peek()
       {
@@ -743,9 +744,9 @@ impl<'i> Tokenizer<'i>
         {
           // consume 'y'
           self.advance();
-          Consonant::simple(BasicConsonant::Gh)
+          consonant!(Gh)
         }
-        _ => Consonant::simple(BasicConsonant::G),
+        _ => consonant!(G),
       },
       'n' => match self.peek()
       {
@@ -753,56 +754,56 @@ impl<'i> Tokenizer<'i>
         {
           // consume 'g'
           self.advance();
-          Consonant::simple(BasicConsonant::Ng)
+          consonant!(Ng)
         }
         'y' =>
         {
           // consume 'y'
           self.advance();
-          Consonant::simple(BasicConsonant::Ny)
+          consonant!(Ny)
         }
-        _ => Consonant::simple(BasicConsonant::N),
+        _ => consonant!(N),
       },
-      'c' => Consonant::simple(BasicConsonant::C),
+      'c' => consonant!(C),
       'j' => match self.peek()
       {
         'h' =>
         {
           // consume 'h'
           self.advance();
-          Consonant::simple(BasicConsonant::Jh)
+          consonant!(Jh)
         }
-        _ => Consonant::simple(BasicConsonant::J),
+        _ => consonant!(J),
       },
-      't' => Consonant::simple(BasicConsonant::T),
+      't' => consonant!(T),
       'd' => match self.peek()
       {
         'h' =>
         {
           // consume 'h'
           self.advance();
-          Consonant::simple(BasicConsonant::Dh)
+          consonant!(Dh)
         }
-        _ => Consonant::simple(BasicConsonant::D),
+        _ => consonant!(D),
       },
-      'p' => Consonant::simple(BasicConsonant::P),
+      'p' => consonant!(P),
       'b' => match self.peek()
       {
         'h' =>
         {
           // consume 'h'
           self.advance();
-          Consonant::simple(BasicConsonant::Bh)
+          consonant!(Bh)
         }
-        _ => Consonant::simple(BasicConsonant::B),
+        _ => consonant!(B),
       },
-      'm' => Consonant::simple(BasicConsonant::M),
-      'y' => Consonant::simple(BasicConsonant::Y),
-      'r' => Consonant::simple(BasicConsonant::R),
-      'l' => Consonant::simple(BasicConsonant::L),
-      'w' => Consonant::simple(BasicConsonant::W),
-      's' => Consonant::simple(BasicConsonant::S),
-      'a' => Consonant::simple(BasicConsonant::A),
+      'm' => consonant!(M),
+      'y' => consonant!(Y),
+      'r' => consonant!(R),
+      'l' => consonant!(L),
+      'w' => consonant!(W),
+      's' => consonant!(S),
+      'a' => consonant!(A),
       _ => unreachable!(),
     };
 
@@ -811,7 +812,7 @@ impl<'i> Tokenizer<'i>
     if consonant.basic == BasicConsonant::A
     {
       let vowel = self.parse_vowel_a();
-      return TokenKind::Syllable(Syllable::with_vowel(vowel));
+      return TokenKind::Syllable(syllable!(vowel));
     }
 
     // check for medial consonant 'y' and 'r'
@@ -940,7 +941,7 @@ impl<'i> Tokenizer<'i>
       return TokenKind::Unknown;
     }
 
-    TokenKind::Syllable(Syllable::new(consonant, vowel.unwrap()))
+    TokenKind::Syllable(syllable!(consonant, vowel.unwrap()))
   }
 
   /// Get the next possible token from the input.

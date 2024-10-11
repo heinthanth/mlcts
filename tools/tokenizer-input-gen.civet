@@ -11,12 +11,12 @@ const parsedCsv = csvPath
 
 // extract single consonant from a row
 function extractSingleConsonant(row: string[]): string[]
-    const burmeseSyllables = row[3].split("|")
+    const myanmarSyllables = row[3].split("|")
     const mlctsSyllables = row[4].split("|")
     
     mlctsSyllables
     |> .map((x: string, i: number) => [x, i])
-    |> .map(([x, i]) => [x, burmeseSyllables[i]])
+    |> .map(([x, i]) => [x, myanmarSyllables[i]])
 
 // make the first letter uppercase
 function capitalizeFirstLetter(s: string): string
@@ -53,7 +53,7 @@ function extractConsonant(b: string, m: string,
     else if b.includes("ျွ")
         m.slice(0, -2)
             |> capitalizeFirstLetter
-            |> function (c) do [c, "Hw"]
+            |> function (c) do [c, "Yw"]
     else if b.includes("ြွ")
         m.slice(0, -2)
             |> capitalizeFirstLetter
@@ -106,28 +106,37 @@ const outputPath = path.join("tests", "t_tokenizer_inputs_single.csv")
 const outputFile = Deno.openSync(outputPath, { write: true, create: true })
 const textEncoder = new TextEncoder()
 
-const header = "class,input_burmese,input_mlcts,consonant,medial_diacritic,vowel,virama,tone\n"
-outputFile.write(textEncoder.encode(header))
+const header = "class,input_myanmar,input_mlcts,consonant,medial_diacritic,vowel,virama,tone\n"
+outputFile.truncateSync()
+outputFile.writeSync(textEncoder.encode(header))
+outputFile.syncDataSync();
 
-console.log "[*] Generating consonant inputs"
-parsedCsv
-    |> function(ent: string[][]) do extractSyllable(ent, "a.")
-    |> .map((row) => convertRow("consonant", row, "a.", "A", undefined, "Creaky"))
-    |> stringify
-    |> textEncoder.encode |> outputFile.writeSync
+function generateInput(vowelName: string, vowel_symbol: string,
+        vowel: string, virama?: string, tone?: string,
+        filterFn?: (inp: string) => boolean): void
+    console.log `[*] Generating vowel '${vowelName}' inputs`
+    parsedCsv
+        |> function(ent: string[][]) do extractSyllable(ent, vowel_symbol, filterFn)
+        |> .map((r) => convertRow("consonant", r, vowel_symbol, vowel, virama, tone))
+        |> stringify
+        |> textEncoder.encode |> outputFile.writeSync
 
-console.log "[*] Generating vowel 'a' inputs"
-parsedCsv
-    |> function(ent: string[][]) do extractSyllable(ent, "a")
-    |> .map((row) => convertRow("vowel_a", row, "a", "A", undefined, undefined))
-    |> stringify
-    |> textEncoder.encode |> outputFile.writeSync
+// ---------------------------------------------------------
 
-console.log "[*] Generating vowel 'a:' inputs"
-parsedCsv
-    |> function (ent: string[][]) do extractSyllable(ent, "a:", (inp) => !inp.includes("yauka"))
-    |> .map((row) => convertRow("vowel_a_high", row, "a:", "A", undefined, "High"))
-    |> stringify
-    |> textEncoder.encode |> outputFile.writeSync
+generateInput("a.", "a.", "A", undefined, "Creaky")
+generateInput("a", "a", "A")
 
+function a_high_filter(inp: string): boolean do return !inp.includes("yauka")
+generateInput("a:", "a:", "A", undefined, "High", a_high_filter)
+
+generateInput("ak", "ak", "A", "K")
+generateInput("at", "at", "A", "T")
+generateInput("ac", "ac", "A", "C")
+
+function ap_filter(inp: string): boolean do return !inp.includes("kywanap")
+generateInput("ap", "ap", "A", "P", undefined, ap_filter)
+
+// ---------------------------------------------------------
+
+outputFile.syncDataSync()
 outputFile.close(); console.log "[*] Done generating tokenizer inputs."

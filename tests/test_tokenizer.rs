@@ -1,13 +1,20 @@
 use std::path::Path;
 
+use lazy_static::lazy_static;
 use mlcts::core::*;
 use mlcts::tokenizer::*;
+
+lazy_static! {
+  static ref consonant_tests: Vec<TokenizerInput> = get_tokenizer_inputs()
+    .into_iter()
+    .collect::<Vec<TokenizerInput>>();
+}
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 struct TokenizerInput
 {
   class: String,
-  input_burmese: String,
+  input_myanmar: String,
   input_mlcts: String,
   consonant: BasicConsonant,
   medial_diacritic: Option<MedialDiacritic>,
@@ -38,6 +45,30 @@ mod tests
   {
     test_syllable("vowel_a_high");
   }
+
+  #[test]
+  fn test_vowel_ak()
+  {
+    test_syllable("vowel_ak");
+  }
+
+  #[test]
+  fn test_vowel_ac()
+  {
+    test_syllable("vowel_ac");
+  }
+
+  #[test]
+  fn test_vowel_at()
+  {
+    test_syllable("vowel_at");
+  }
+
+  #[test]
+  fn test_vowel_ap()
+  {
+    test_syllable("vowel_ap");
+  }
 }
 
 /// Get the test inputs for the tokenizer.
@@ -54,18 +85,17 @@ fn get_tokenizer_inputs() -> Vec<TokenizerInput>
 /// Helper function to test syllables.
 fn test_syllable(input_class: &str)
 {
-  let consonant_tests = get_tokenizer_inputs()
-    .into_iter()
-    .filter(|input| input.class == input_class)
-    .collect::<Vec<TokenizerInput>>();
-
   for test in consonant_tests
+    .iter()
+    .filter(|input| input.class == input_class)
   {
-    let mut tokenizer = Tokenizer::new(&test.input_mlcts);
-    let token = tokenizer.next_token();
     let expected_c = Consonant::new(test.consonant, test.medial_diacritic);
     let expected_v = Vowel::new(test.vowel, test.virama, test.tone);
     let expected = TokenKind::Syllable(Syllable::new(expected_c, expected_v));
+
+    let mut tokenizer = Tokenizer::new(&test.input_mlcts);
+    let token = tokenizer.next_token();
+
     assert_eq!(token.kind, expected);
   }
 }

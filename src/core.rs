@@ -4,7 +4,7 @@
 /// automatically calculated.
 pub const BASIC_CONSONANT_START_VALUE: u8 = 0x00;
 
-/// Represents a basic consonant letter in the Burmese script.
+/// Represents a basic consonant letter in the Myanmar script.
 #[repr(u8)]
 #[derive(
   serde::Serialize, serde::Deserialize, Debug, Clone, Copy, PartialEq, Eq,
@@ -71,7 +71,7 @@ pub enum BasicConsonant
   A = BASIC_CONSONANT_START_VALUE + 0x21,
 }
 
-/// Represents medial diacritics in the Burmese script.
+/// Represents medial diacritics in the Myanmar script.
 #[repr(u8)]
 #[derive(
   serde::Serialize, serde::Deserialize, Debug, Clone, Copy, PartialEq, Eq,
@@ -160,7 +160,7 @@ impl MedialDiacritic
   }
 }
 
-/// Represents the consonant part of a Burmese syllable.
+/// Represents the consonant part of a Myanmar syllable.
 /// This can be a basic consonant or a basic consonant followed by one or more
 /// medial diacritics (three at most).
 #[derive(
@@ -224,7 +224,21 @@ impl Consonant
   }
 }
 
-/// Represents a tone mark in the Burmese script.
+/// A macro to create a simple consonant.
+#[macro_export]
+macro_rules! consonant {
+  ($name:ident) => {
+    $crate::core::Consonant::simple($crate::core::BasicConsonant::$name)
+  };
+  ($name:ident, $medial:ident) => {
+    $crate::core::Consonant::with_medial(
+      $crate::core::BasicConsonant::$name,
+      $crate::core::MedialDiacritic::$medial,
+    )
+  };
+}
+
+/// Represents a tone mark in the Myanmar script.
 /// A syllable can have at most one tone mark. But some vowel combinations
 /// cannot have a tone mark.
 #[repr(u8)]
@@ -239,7 +253,7 @@ pub enum Tone
   Creaky,
 }
 
-/// Represents a Virama (အသတ်) in the Burmese script.
+/// Represents a Virama (အသတ်) in the Myanmar script.
 /// Virama can follow a consonant or vowel. But a vowel cannot follow a virama.
 #[repr(u8)]
 #[derive(
@@ -265,7 +279,7 @@ pub enum Virama
   M,
 }
 
-/// Represents a basic vowel letter in the Burmese script.
+/// Represents a basic vowel letter in the Myanmar script.
 /// This enum contains only vowels classified as "basic" vowels and vowels with
 /// same sound but different tone will be treated as the same vowels.
 #[repr(u8)]
@@ -290,7 +304,7 @@ pub enum BasicVowel
   Ui,
 }
 
-/// Represents the vowel part of a Burmese syllable.
+/// Represents the vowel part of a Myanmar syllable.
 /// This can be a basic vowel, vowel with tone mark or a basic vowel
 /// followed by a virama and a tone mark.
 ///
@@ -383,7 +397,34 @@ impl Vowel
   }
 }
 
-/// Represents a Burmese syllable.
+/// A macro to create a simple vowel.
+#[macro_export]
+macro_rules! vowel {
+  ($name:ident) => {
+    $crate::core::Vowel::simple($crate::core::BasicVowel::$name)
+  };
+  ($name:ident; $tone:ident) => {
+    $crate::core::Vowel::with_tone(
+      $crate::core::BasicVowel::$name,
+      Some($crate::core::Tone::$tone),
+    )
+  };
+  ($name:ident, $virama:ident) => {
+    $crate::core::Vowel::with_virama(
+      $crate::core::BasicVowel::$name,
+      $crate::core::Virama::$virama,
+    )
+  };
+  ($name:ident, $virama:ident; $tone:ident) => {
+    $crate::core::Vowel::new(
+      $crate::core::BasicVowel::$name,
+      Some($crate::core::Virama::$virama),
+      Some($crate::core::Tone::$tone),
+    )
+  };
+}
+
+/// Represents a Myanmar syllable.
 /// A syllable can have at most one consonant part and one vowel part.
 /// Syllable will always contains both consonant and vowel parts since 'a' can
 /// be both a consonant and a vowel.
@@ -417,7 +458,7 @@ impl Syllable
 
   /// Creates a new syllable with just the vowel part.
   /// This is a shorthand for
-  /// `Syllable::new(Consonant::simple(BasicConsonant::A), vowel)`.
+  /// `Syllable::new(consonant!(A), vowel)`.
   ///
   /// # Arguments
   ///
@@ -428,6 +469,17 @@ impl Syllable
   /// A new syllable with just the vowel part.
   pub fn with_vowel(vowel: Vowel) -> Self
   {
-    Self::new(Consonant::simple(BasicConsonant::A), vowel)
+    Self::new(consonant!(A), vowel)
   }
+}
+
+/// A macro to create a simple syllable.
+#[macro_export]
+macro_rules! syllable {
+  ($vowel:expr) => {
+    $crate::core::Syllable::with_vowel($vowel)
+  };
+  ($consonant:expr, $vowel:expr) => {
+    $crate::core::Syllable::new($consonant, $vowel)
+  };
 }

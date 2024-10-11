@@ -1,4 +1,4 @@
-burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
+myanmar,mlcts,syllable_count,myanmar_syllables,mlcts_syllables
 ကကူရံ,ka.kuram,3,က|ကူ|ရံ,ka.|ku|ram
 ကကြိုး,ka.krui:,2,က|ကြိုး,ka.|krui:
 ကကြိုးတန်ဆာ,ka.krui:tanhca,4,က|ကြိုး|တန်|ဆာ,ka.|krui:|tan|hca
@@ -391,7 +391,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ကန့်သတ်,kan.sat,2,ကန့်|သတ်,kan.|sat
 ကန့်သတ်ကုန်,kan.satkun,3,ကန့်|သတ်|ကုန်,kan.|sat|kun
 ကန့်သတ်စစ်ပွဲ,kan.satcacpwai:,4,ကန့်|သတ်|စစ်|ပွဲ,kan.|sat|cac|pwai:
-ကန့်သတ်စျေး,kan.satcye:,3,ကန့်|သတ်|စျေး,kan.|sat|cye:
+ကန့်သတ်ဈေး,kan.satjhe:,3,ကန့်|သတ်|ဈေး,kan.|sat|jhe:
 ကန့်အိတ်,kan.it,2,ကန့်|အိတ်,kan.|it
 ကန်ကျောက်,kankyauk,2,ကန်|ကျောက်,kan|kyauk
 ကန်ကြိုးဆက်,kankrui:hcak,3,ကန်|ကြိုး|ဆက်,kan|krui:|hcak
@@ -459,7 +459,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ကမ္ဘာလောက,ka.bhalau:ka.,4,ကမ်|ဘာ|လော|က,kam|bha|lau:|ka.
 ကမ္ဘာလေးရပ်,ka.bhale:rap,4,ကမ်|ဘာ|လေး|ရပ်,kam|bha|le:|rap
 ကမ်ဘာလှည့်ခရီးသည်,kambhahlany.hka.ri:sany,6,ကမ်|ဘာ|လှည့်|ခ|ရီး|သည်,kam|bha|hlany.|hka.|ri:|sany
-ကမ္ဘာ့စျေးကွက်,ka.bha.cye:kwak,4,ကမ်|ဘာ့|စျေး|ကွက်,kam|bha.|cye:|kwak
+ကမ္ဘာ့ဈေးကွက်,ka.bha.jhe:kwak,4,ကမ်|ဘာ့|ဈေး|ကွက်,kam|bha.|jhe:|kwak
 ကမ္ဘာ့ရက်သတ်မျဉ်း,ka.bha.raksatmyany:,5,ကမ်|ဘာ့|ရက်|သတ်|မျဉ်း,kam|bha.|rak|sat|myany:
 ကမ္မဇရုပ်,ka.ma.ja.rup,4,ကမ်|မ|ဇ|ရုပ်,kam|ma.|ja.|rup
 ကမ္မဇလေ,ka.ma.ja.le,4,ကမ်|မ|ဇ|လေ,kam|ma.|ja.|le
@@ -545,7 +545,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ကာလတန်ဖိုး,kala.tanhpui:,4,ကာ|လ|တန်|ဖိုး,ka|la.|tan|hpui:
 ကာလနဂါး,kala.na.ga:,4,ကာ|လ|န|ဂါး,ka|la.|na.|ga:
 ကာလနာ,kala.na,3,ကာ|လ|နာ,ka|la.|na
-ကာလပေါက်စျေး,kala.paukcye:,4,ကာ|လ|ပေါက်|စျေး,ka|la.|pauk|cye:
+ကာလပေါက်ဈေး,kala.paukjhe:,4,ကာ|လ|ပေါက်|ဈေး,ka|la.|pauk|jhe:
 ကာလပေါ်,kala.pau,3,ကာ|လ|ပေါ်,ka|la.|pau
 ကာလပျက်,kala.pyak,3,ကာ|လ|ပျက်,ka|la.|pyak
 ကာလဝမ်း,kala.wam:,3,ကာ|လ|ဝမ်း,ka|la.|wam:
@@ -803,7 +803,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ကုန်စိမ်း,kuncim:,2,ကုန်|စိမ်း,kun|cim:
 ကုန်စိမ်းသည်,kuncim:sany,3,ကုန်|စိမ်း|သည်,kun|cim:|sany
 ကုန်စုံဆိုင်,kuncumhcuing,3,ကုန်|စုံ|ဆိုင်,kun|cum|hcuing
-ကုန်စျေးနှုန်း,kuncye:hnun:,3,ကုန်|စျေး|နှုန်း,kun|cye:|hnun:
+ကုန်ဈေးနှုန်း,kunjhe:hnun:,3,ကုန်|ဈေး|နှုန်း,kun|jhe:|hnun:
 ကုန်တင်ကား,kuntangka:,3,ကုန်|တင်|ကား,kun|tang|ka:
 ကုန်တင်ကုန်ချအလုပ်သမား,kuntangkunhkya.a.lupsa.ma:,8,ကုန်|တင်|ကုန်|ချ|အ|လုပ်|သ|မား,kun|tang|kun|hkya.|a.|lup|sa.|ma:
 ကုန်တိုက်,kuntuik,2,ကုန်|တိုက်,kun|tuik
@@ -1592,7 +1592,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ကြမ္မာငင်,kra.mangang,3,ကြမ်|မာ|ငင်,kram|ma|ngang
 ကြမ်းကြားလေကြား,kram:kra:lekra:,4,ကြမ်း|ကြား|လေ|ကြား,kram:|kra:|le|kra:
 ကြမ်းကြုတ်,kram:krut,2,ကြမ်း|ကြုတ်,kram:|krut
-ကြမ်းခင်းစျေး,kram:hkang:cye:,3,ကြမ်း|ခင်း|စျေး,kram:|hkang:|cye:
+ကြမ်းခင်းဈေး,kram:hkang:jhe:,3,ကြမ်း|ခင်း|ဈေး,kram:|hkang:|jhe:
 ကြမ်းတမ်း,kram:tam:,2,ကြမ်း|တမ်း,kram:|tam:
 ကြမ်းတိုက်,kram:tuik,2,ကြမ်း|တိုက်,kram:|tuik
 ကြမ်းထော်,kram:htau,2,ကြမ်း|ထော်,kram:|htau
@@ -6027,7 +6027,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ညကြီးမင်းကြီး,nya.kri:mang:kri:,4,ည|ကြီး|မင်း|ကြီး,nya.|kri:|mang:|kri:
 ညချမ်း,nya.hkyam:,2,ည|ချမ်း,nya.|hkyam:
 ညစာ,nya.ca,2,ည|စာ,nya.|ca
-ညစျေး,nya.cye:,2,ည|စျေး,nya.|cye:
+ညဈေး,nya.jhe:,2,ည|ဈေး,nya.|jhe:
 ညတာ,nya.ta,2,ည|တာ,nya.|ta
 ညတာ,nya.ta,2,ည|တာ,nya.|ta
 ညတွင်းကြီး,nya.twang:kri:,3,ည|တွင်း|ကြီး,nya.|twang:|kri:
@@ -9119,7 +9119,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 နွားစားကျက်,nwa:ca:kyak,3,နွား|စား|ကျက်,nwa:|ca:|kyak
 နွားစားကျင်း,nwa:ca:kyang:,3,နွား|စား|ကျင်း,nwa:|ca:|kyang:
 နွားစားငုတ်,nwa:ca:ngut,3,နွား|စား|ငုတ်,nwa:|ca:|ngut
-နွားစျေး,nwa:cye:,2,နွား|စျေး,nwa:|cye:
+နွားဈေး,nwa:jhe:,2,နွား|ဈေး,nwa:|jhe:
 နွားတင်းကုပ်,nwa:tang:kup,3,နွား|တင်း|ကုပ်,nwa:|tang:|kup
 နွားထီး,nwa:hti:,2,နွား|ထီး,nwa:|hti:
 နွားနင်း,nwa:nang:,2,နွား|နင်း,nwa:|nang:
@@ -10513,12 +10513,12 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 ပေါက်ဂဏန်း,paukga.nan:,3,ပေါက်|ဂ|ဏန်း,pauk|ga.|nan:
 ပေါက်စ,paukca.,2,ပေါက်|စ,pauk|ca.
 ပေါက်စီ,paukci,2,ပေါက်|စီ,pauk|ci
-ပေါက်စျေး,paukcye:,2,ပေါက်|စျေး,pauk|cye:
+ပေါက်ဈေး,paukjhe:,2,ပေါက်|ဈေး,pauk|jhe:
 ပေါက်ဆပ်ပြာ,paukhcappra,3,ပေါက်|ဆပ်|ပြာ,pauk|hcap|pra
 ပေါက်ဆား,paukhca:,2,ပေါက်|ဆား,pauk|hca:
 ပေါက်တတ်ကရ,pauktatka.ra.,4,ပေါက်|တတ်|က|ရ,pauk|tat|ka.|ra.
 ပေါက်တူး,pauktu:,2,ပေါက်|တူး,pauk|tu:
-ပေါက်ပန်းစျေး,paukpan:cye:,3,ပေါက်|ပန်း|စျေး,pauk|pan:|cye:
+ပေါက်ပန်းဈေး,paukpan:jhe:,3,ပေါက်|ပန်း|ဈေး,pauk|pan:|jhe:
 ပေါက်ပန်းဖြူ,paukpan:hpru,3,ပေါက်|ပန်း|ဖြူ,pauk|pan:|hpru
 ပေါက်ပေါက်,paukpauk,2,ပေါက်|ပေါက်,pauk|pauk
 ပေါက်ပေါက်ဆုပ်,paukpaukhcup,3,ပေါက်|ပေါက်|ဆုပ်,pauk|pauk|hcup
@@ -14438,7 +14438,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 မှောင်ကွယ်,hmaungkwai,2,မှောင်|ကွယ်,hmaung|kwai
 မှောင်ခို,hmaunghkui,2,မှောင်|ခို,hmaung|hkui
 မှောင်ခို,hmaunghkui,2,မှောင်|ခို,hmaung|hkui
-မှောင်ခိုစျေး,hmaunghkuicye:,3,မှောင်|ခို|စျေး,hmaung|hkui|cye:
+မှောင်ခိုဈေး,hmaunghkuijhe:,3,မှောင်|ခို|ဈေး,hmaung|hkui|jhe:
 မှောင်ချ,hmaunghkya.,2,မှောင်|ချ,hmaung|hkya.
 မှောင်မည်း,hmaungmany:,2,မှောင်|မည်း,hmaung|many:
 မှောင်မိုက်,hmaungmuik,2,မှောင်|မိုက်,hmaung|muik
@@ -17453,7 +17453,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 လေလံ,lelam,2,လေ|လံ,le|lam
 လေလံခေါင်း,lelamhkaung:,3,လေ|လံ|ခေါင်း,le|lam|hkaung:
 လေလံချိုး,lelamhkyui:,3,လေ|လံ|ချိုး,le|lam|hkyui:
-လေလံစျေး,lelamcye:,3,လေ|လံ|စျေး,le|lam|cye:
+လေလံဈေး,lelamjhe:,3,လေ|လံ|ဈေး,le|lam|jhe:
 လေလံဆွဲ,lelamhcwai:,3,လေ|လံ|ဆွဲ,le|lam|hcwai:
 လေလံတင်,lelamtang,3,လေ|လံ|တင်,le|lam|tang
 လေလံပစ်,lelampac,3,လေ|လံ|ပစ်,le|lam|pac
@@ -18810,7 +18810,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 သရက်ပျဉ်,sa.rakpyany,3,သ|ရက်|ပျဉ်,sa.|rak|pyany
 သရက်ရွက်,sa.rakrwak,3,သ|ရက်|ရွက်,sa.|rak|rwak
 သရစ်,sa.rac,2,သ|ရစ်,sa.|rac
-သရဇ္စျာယ်,sa.ra.cyai,3,သ|ရဇ်|စျာယ်,sa.|rak|cyai
+သရဇ္ဈာယ်,sa.ra.jhai,3,သ|ရဇ်|ဈာယ်,sa.|rak|jhai
 သရည်း,sa.rany:,2,သ|ရည်း,sa.|rany:
 သရမ်း,sa.ram:,2,သ|ရမ်း,sa.|ram:
 သရိုး,sa.rui:,2,သ|ရိုး,sa.|rui:
@@ -23123,7 +23123,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 အလုံး,a.lum:,2,အ|လုံး,a.|lum:
 အလုံးကျ,a.lum:kya.,3,အ|လုံး|ကျ,a.|lum:|kya.
 အလုံးစုံ,a.lum:cum,3,အ|လုံး|စုံ,a.|lum:|cum
-အလုံးစျေး,a.lum:cye:,3,အ|လုံး|စျေး,a.|lum:|cye:
+အလုံးဈေး,a.lum:jhe:,3,အ|လုံး|ဈေး,a.|lum:|jhe:
 အလုံးဆို့,a.lum:hcui.,3,အ|လုံး|ဆို့,a.|lum:|hcui.
 အလုံးလိုက်အခဲလိုက်,a.lum:luika.hkai:luik,6,အ|လုံး|လိုက်|အ|ခဲ|လိုက်,a.|lum:|luik|a.|hkai:|luik
 အလုံးအခဲ,a.lum:a.hkai:,4,အ|လုံး|အ|ခဲ,a.|lum:|a.|hkai:
@@ -23659,7 +23659,7 @@ burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables
 အစ်နေ့,acne.,2,အစ်|နေ့,ac|ne.
 အစ်မ,acma.,2,အစ်|မ,ac|ma.
 အစ်အောက်,acauk,2,အစ်|အောက်,ac|auk
-အဇ္စျတ္တ,a.cya.ta.,3,အဇ်|စျတ်|တ,ak|cyat|ta.
+အဇ္ဈတ္တ,a.jha.ta.,3,အဇ်|ဈတ်|တ,ak|jhat|ta.
 အဉ္စလီ,a.ca.li,3,အဉ်|စ|လီ,any|ca.|li
 အဋ္ဌကထာ,a.hta.ka.hta,4,အဋ်|ဌ|က|ထာ,ak|hta.|ka.|hta
 အဋ္ဌဂံ,a.hta.gam,3,အဋ်|ဌ|ဂံ,ak|hta.|gam

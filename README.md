@@ -4,16 +4,16 @@ An experimental implementation of The Myanmar Language Commission Transcription 
 
 ## Motivation
 
-In Myanmar, many people use Myanglish or Burglish (Romanized versions of Burmese) on social networks and other places.
+In Myanmar, many people use Myanglish or Burglish (Romanized versions of Myanmar) on social networks and other places.
 However, there is no standardized system for this Romanization, making it difficult for me to read comfortably.
 Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am curious if I can create a similar one as a challenge for myself.
 
 ## Current Progress
 
 - [x] Tokenizer (MLCTS to tokens)
-- [ ] Basic Burmese script generator (tokens to Burmese script without ambiguity resolution)
+- [ ] Basic Myanmar script generator (tokens to Myanmar script without ambiguity resolution)
 - [ ] Stacked consonant recognition
-- [ ] Ambiguity resolver (Resolve ambiguous MLCTS token to correct Burmese script )
+- [ ] Ambiguity resolver (Resolve ambiguous MLCTS token to correct Myanmar script )
 
 ## Required Tools
 

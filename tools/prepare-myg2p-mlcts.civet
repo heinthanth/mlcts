@@ -16,7 +16,7 @@ function codeTemplate(content: string): string
     ${my2romJs.replaceAll("for (letter in", "for (const letter in")}\n
     mya2rom_all(${JSON.stringify(content)})```
 
-// convert Burmese script into MLCTS
+// convert Myanmar script into MLCTS
 function convert(content: string): string
     codeTemplate(content)
     |> eval
@@ -63,7 +63,7 @@ progressBar.start(entriesToBeProcessed.length, 0)
 
 const outputCsvPath = path.join("assets", "myg2p-dict-mlcts.csv")
 
-const header = "burmese,mlcts,syllable_count,burmese_syllables,mlcts_syllables"
+const header = "myanmar,mlcts,syllable_count,myanmar_syllables,mlcts_syllables"
 Deno.writeTextFileSync(outputCsvPath, header + "\n")
 
 const outputCsv = Deno.openSync(outputCsvPath, { append: true })
