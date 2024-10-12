@@ -216,7 +216,7 @@ impl<'i> Tokenizer<'i>
   /// The current character from the input iterator.
   fn advance(&mut self) -> Option<char>
   {
-    self.input.next()
+    self.input.next().map(|c| c.to_ascii_lowercase())
   }
 
   /// Peek the current character from the input iterator without
@@ -228,7 +228,12 @@ impl<'i> Tokenizer<'i>
   /// The current character from the input iterator.
   fn peek(&self) -> char
   {
-    self.input.clone().next().unwrap_or(EOF_CHAR)
+    self
+      .input
+      .clone()
+      .next()
+      .map(|c| c.to_ascii_lowercase())
+      .unwrap_or(EOF_CHAR)
   }
 
   /// Peek the next character from the input iterator without
@@ -242,7 +247,10 @@ impl<'i> Tokenizer<'i>
   {
     let mut peek = self.input.clone();
     peek.next();
-    peek.next().unwrap_or(EOF_CHAR)
+    peek
+      .next()
+      .map(|c| c.to_ascii_lowercase())
+      .unwrap_or(EOF_CHAR)
   }
 
   /// Peek the next next character from the input iterator without
@@ -274,7 +282,10 @@ impl<'i> Tokenizer<'i>
     peek.next();
     peek.next();
     peek.next();
-    peek.next().unwrap_or(EOF_CHAR)
+    peek
+      .next()
+      .map(|c| c.to_ascii_lowercase())
+      .unwrap_or(EOF_CHAR)
   }
 
   /// Parse a whitespace token.
