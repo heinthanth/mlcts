@@ -1,6 +1,5 @@
 use leptos::html::*;
 use leptos::*;
-use leptos_dom::logging::console_log;
 use leptos_meta::{Title, TitleProps};
 use mlcts_tokenizer::mlcts_core::Syllable;
 use mlcts_tokenizer::{tokenize, Token, TokenKind};
@@ -155,7 +154,6 @@ fn substring(s: &str, start: usize, length: usize) -> &str
 fn syllable_tkn(syl: Syllable) -> impl IntoView
 {
   let cls = "px-2 border inline-block rounded-md text-white";
-  console_log(&format!("{:?}", syl));
 
   let c = span()
     .classes(cls)
