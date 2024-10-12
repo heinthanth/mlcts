@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   build:
-    name: Build the website and Host on Github Pages
+    name: Build the website and Host on Cloudflare Pages
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,7 +23,7 @@ jobs:
         with:
           tool: cargo-binstall
       - name: Install Required Tools
-        run: cargo binstall trunk
+        run: cargo binstall -y trunk
       - name: Build the website
         working-directory: ./mlcts_website
         run: trunk build --release
