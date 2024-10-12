@@ -1,0 +1,24 @@
+[package]
+name = "mlcts_website"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+leptos = { version = "0.6", features = ["csr", "nightly"] }
+leptos_meta = { version = "0.6", features = ["csr", "nightly"] }
+leptos_router = { version = "0.6", features = ["csr", "nightly"] }
+console_log = "1"
+log = "0.4"
+console_error_panic_hook = "0.1"
+mlcts_tokenizer = { path = "../mlcts_tokenizer" }
+
+[dev-dependencies]
+wasm-bindgen = "0.2"
+wasm-bindgen-test = "0.3"
+web-sys = { version = "0.3", features = ["Document", "Window"] }
+
+[profile.release]
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"

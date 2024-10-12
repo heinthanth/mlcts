@@ -1,0 +1,6 @@
+[build]
+target = "src/index.html"
+dist = "dist"
+
+[tools]
+tailwindcss = "4.0.0-alpha.26"
