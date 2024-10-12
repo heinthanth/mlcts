@@ -10,7 +10,7 @@ Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am 
 
 ## Current Progress
 
-- [x] Tokenizer (MLCTS to tokens)
+- [ ] Tokenizer (MLCTS to tokens) - IMPROVEMENTS IN PROGRESS
 - [ ] Basic Myanmar script generator (tokens to Myanmar script without ambiguity resolution)
 - [ ] Stacked consonant recognition
 - [ ] Ambiguity resolver (Resolve ambiguous MLCTS token to correct Myanmar script )
