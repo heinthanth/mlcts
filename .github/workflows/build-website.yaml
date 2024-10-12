@@ -1,0 +1,38 @@
+name: "Build and Host Website"
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build the website and Host on Github Pages
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+          target: wasm32-unknown-unknown
+      - name: Install Cargo tools
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-binstall
+      - name: Install Required Tools
+        run: cargo binstall trunk
+      - name: Build the website
+        working-directory: ./mlcts_website
+        run: trunk build --release
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: ./mlcts_website/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
