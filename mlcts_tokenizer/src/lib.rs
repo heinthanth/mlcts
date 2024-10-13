@@ -219,6 +219,19 @@ impl<'i> Tokenizer<'i>
     self.input.next().map(|c| c.to_ascii_lowercase())
   }
 
+  /// Consumes n characters from the input iterator.
+  ///
+  /// # Arguments
+  ///
+  /// * `n` - The number of characters to consume.
+  fn advance_n(&mut self, n: usize)
+  {
+    for _ in 0 .. n
+    {
+      self.advance();
+    }
+  }
+
   /// Peek the current character from the input iterator without
   /// advancing the iterator. This will return `EOF_CHAR` if the
   /// iterator has reached the end of the input.
@@ -236,6 +249,30 @@ impl<'i> Tokenizer<'i>
       .unwrap_or(EOF_CHAR)
   }
 
+  /// Peek the nth character from the input iterator without
+  /// advancing the iterator. This will return `EOF_CHAR` if the
+  /// iterator has reached the end of the input.
+  ///
+  /// # Arguments
+  ///
+  /// * `n` - The number of characters to peek.
+  ///
+  /// # Returns
+  ///
+  /// The nth character from the input iterator.
+  fn peek_nth(&self, n: usize) -> char
+  {
+    let mut peek = self.input.clone();
+    for _ in 0 .. n
+    {
+      peek.next();
+    }
+    peek
+      .next()
+      .map(|c| c.to_ascii_lowercase())
+      .unwrap_or(EOF_CHAR)
+  }
+
   /// Peek the next character from the input iterator without
   /// advancing the iterator. This will return `EOF_CHAR` if the
   /// iterator has reached the end of the input.
@@ -246,41 +283,6 @@ impl<'i> Tokenizer<'i>
   fn peek_next(&self) -> char
   {
     let mut peek = self.input.clone();
-    peek.next();
-    peek
-      .next()
-      .map(|c| c.to_ascii_lowercase())
-      .unwrap_or(EOF_CHAR)
-  }
-
-  /// Peek the next next character from the input iterator without
-  /// advancing the iterator. This will return `EOF_CHAR` if the
-  /// iterator has reached the end of the input.
-  ///
-  /// # Returns
-  ///
-  /// The next next character from the input iterator.
-  fn peek_next_next(&self) -> char
-  {
-    let mut peek = self.input.clone();
-    peek.next();
-    peek.next();
-    peek.next().unwrap_or(EOF_CHAR)
-  }
-
-  /// Peek the next next next character from the input iterator without
-  /// advancing the iterator. This will return `EOF_CHAR` if the
-  /// iterator has reached the end of the input.
-  ///
-  /// # Returns
-  ///
-  /// The next next next character from the input iterator.
-  fn peek_next_next_next_next(&self) -> char
-  {
-    let mut peek = self.input.clone();
-    peek.next();
-    peek.next();
-    peek.next();
     peek.next();
     peek
       .next()
@@ -346,18 +348,123 @@ impl<'i> Tokenizer<'i>
     }
   }
 
+  /// Select vowel from possible candidates.
+  ///
+  /// # Arguments
+  ///
+  /// * `syllables` - The possible syllables.
+  ///
+  /// # Returns
+  ///
+  /// The selected syllable.
+  fn select_vowel(&self, syllables: Vec<(Syllable, Syllable)>) -> Syllable
+  {
+    // this will always return the first syllable.
+    // we need to implement dictionary checkings to select the correct syllable.
+    return syllables[0].0.clone();
+  }
+
+  /// In certain cases like "lapa", tokenization can be ambiguous.
+  /// And it should output "la" and "pa" as separate tokens instead of "lap" and
+  /// "a". But this only applies to the case that there's a vowel after the
+  /// virama consonant and virama won't be used in a stacked consonant.
+  ///
+  /// # Arguments
+  ///
+  /// * `original_vowel` - The original vowel.
+  /// * `possible_virama` - The possible virama consonant.
+  /// * `virama_len` - The length of the virama consonant to eat.
+  /// * `has_tone` - Whether the vowel has a tone.
+  ///
+  /// # Returns
+  ///
+  /// A vowel token.
+  fn handle_possible_ambiguity(
+    &mut self,
+    original_vowel: BasicVowel,
+    possible_virama: Virama,
+    virama_len: usize,
+    has_tone: bool,
+    consonant_part: Consonant,
+  ) -> Vowel
+  {
+    let next_char_followed_virama = self.peek_nth(virama_len);
+
+    if !matches!(next_char_followed_virama, 'a' | 'i' | 'u' | 'e')
+    {
+      // if there's no vowel after the virama consonant, we don't need to check
+      // for possible ambiguity.
+      self.advance_n(virama_len);
+      let tone = if has_tone { self.parse_tone() } else { None };
+      return Vowel::new(original_vowel, Some(possible_virama), tone);
+    }
+
+    // we will try to generate the following combinations:
+    // 1. (current consonant + current vowel + virama) + (next vowel)
+    // 2. (current consonant + current vowel) + (virama + next consonant + next vowel)
+    // and select the best one.
+    let current_input_str = self.input.as_str();
+
+    // remove the virama consonant and the vowel after it.
+    let mut cloned_tokenizer = Tokenizer::new(current_input_str);
+    cloned_tokenizer.advance_n(virama_len + 1);
+    let candidate_vowel = cloned_tokenizer.parse_vowel(
+      next_char_followed_virama,
+      Consonant::simple(possible_virama.into()),
+    );
+    let candidate_syllable =
+      syllable!(Consonant::simple(possible_virama.into()), candidate_vowel);
+
+    let base_syllable = syllable!(
+      consonant_part,
+      Vowel::new(original_vowel, Some(possible_virama), None)
+    );
+    // assume that we consume the virama consonant.
+    let mut cloned_tokenizer_3 = Tokenizer::new(current_input_str);
+    cloned_tokenizer_3.advance_n(virama_len);
+    let following_syllable_2_vowel =
+      cloned_tokenizer_3.parse_vowel(next_char_followed_virama, consonant!(A));
+    let following_syllable_2 =
+      syllable!(consonant!(A), following_syllable_2_vowel);
+
+    let selected_syllable = self.select_vowel(vec![
+      (base_syllable, following_syllable_2),
+      (
+        syllable!(consonant_part, Vowel::simple(original_vowel)),
+        candidate_syllable,
+      ),
+    ]);
+
+    if selected_syllable == base_syllable
+    {
+      // if the selected syllable is the base syllable, then we need to
+      // consume the virama consonant.
+      self.advance_n(virama_len);
+      return Vowel::new(original_vowel, Some(possible_virama), None);
+    }
+
+    // if the selected syllable is the candidate 1, then we don't need to
+    // consume the virama consonant since this will be part of the next
+    // iteration.
+    Vowel::new(original_vowel, None, None)
+  }
+
   /// Parse virama, stacked consonants and tone if exists.
   ///
   /// # Returns
   ///
   /// a vowel part.
-  fn parse_virama_and_tone(&mut self, original_vowel: BasicVowel) -> Vowel
+  fn parse_virama_and_tone(
+    &mut self,
+    original_vowel: BasicVowel,
+    consonant_part: Consonant,
+  ) -> Vowel
   {
     match (
       self.peek(),
       self.peek_next(),
-      self.peek_next_next(),
-      self.peek_next_next_next_next(),
+      self.peek_nth(2),
+      self.peek_nth(3),
     )
     {
       ('.', ..) =>
@@ -372,13 +479,13 @@ impl<'i> Tokenizer<'i>
         self.advance();
         return Vowel::new(original_vowel, None, Some(Tone::High));
       }
-      ('k', ..) =>
-      {
-        // consume 'k'
-        self.advance();
-        // 'ak' can't have a tone mark
-        return Vowel::new(original_vowel, Some(Virama::K), None);
-      }
+      ('k', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::K,
+        1,
+        false,
+        consonant_part,
+      ),
       ('g', 'g', 'h', ..) | ('g', 'g', ..) =>
       {
         // consume 'g'
@@ -386,13 +493,13 @@ impl<'i> Tokenizer<'i>
         // 'ag' might be a stacked consonant
         return Vowel::new(original_vowel, Some(Virama::G), None);
       }
-      ('c', ..) =>
-      {
-        // consume 'c'
-        self.advance();
-        // 'ac' can't have a tone mark
-        return Vowel::new(original_vowel, Some(Virama::C), None);
-      }
+      ('c', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::C,
+        1,
+        false,
+        consonant_part,
+      ),
       ('j', 'j', 'h', ..) | ('j', 'j', ..) =>
       {
         // consume 'j'
@@ -400,13 +507,13 @@ impl<'i> Tokenizer<'i>
         // 'aj' might be a stacked consonant
         return Vowel::new(original_vowel, Some(Virama::J), None);
       }
-      ('t', ..) =>
-      {
-        // consume 't'
-        self.advance();
-        // 'at' can't have a tone mark
-        return Vowel::new(original_vowel, Some(Virama::T), None);
-      }
+      ('t', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::T,
+        1,
+        false,
+        consonant_part,
+      ),
       ('h', 't', 'h', 't') =>
       {
         // consume 'h'
@@ -423,26 +530,26 @@ impl<'i> Tokenizer<'i>
         // 'ad' might be a stacked consonant
         return Vowel::new(original_vowel, Some(Virama::D), None);
       }
-      ('p', ..) =>
-      {
-        // consume 'p'
-        self.advance();
-        // 'ap' can't have a tone mark
-        return Vowel::new(original_vowel, Some(Virama::P), None);
-      }
+      ('p', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::P,
+        1,
+        false,
+        consonant_part,
+      ),
       ('b', 'b', 'h', ..) | ('b', 'b', ..) =>
       {
         // consume 'b'
         self.advance();
         return Vowel::new(original_vowel, Some(Virama::B), None);
       }
-      ('m', ..) =>
-      {
-        // consume 'm'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(original_vowel, Some(Virama::M), tone);
-      }
+      ('m', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::M,
+        1,
+        true,
+        consonant_part,
+      ),
       ('n', '.', ..) =>
       {
         // consume 'n'
@@ -459,31 +566,27 @@ impl<'i> Tokenizer<'i>
         self.advance();
         return Vowel::new(original_vowel, Some(Virama::N), Some(Tone::High));
       }
-      ('n', 'g', ..) =>
-      {
-        // consume 'n'
-        self.advance();
-        // consume 'g'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(original_vowel, Some(Virama::Ng), tone);
-      }
-      ('n', 'y', ..) =>
-      {
-        // consume 'n'
-        self.advance();
-        // consume 'y'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(original_vowel, Some(Virama::Ny), tone);
-      }
-      ('n', ..) =>
-      {
-        // consume 'n'
-        self.advance();
-        let tone = self.parse_tone();
-        return Vowel::new(original_vowel, Some(Virama::N), tone);
-      }
+      ('n', 'g', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::Ng,
+        2,
+        true,
+        consonant_part,
+      ),
+      ('n', 'y', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::Ny,
+        2,
+        true,
+        consonant_part,
+      ),
+      ('n', ..) => self.handle_possible_ambiguity(
+        original_vowel,
+        Virama::N,
+        1,
+        true,
+        consonant_part,
+      ),
       ('s', 's', ..) =>
       {
         // consume 's'
@@ -505,11 +608,16 @@ impl<'i> Tokenizer<'i>
   /// # Arguments
   ///
   /// * `first_char` - The first vowel character.
+  /// * `consonant_part` - The consonant part of the syllable.
   ///
   /// # Returns
   ///
   /// A vowel token if valid, otherwise an unknown token.
-  fn parse_vowel(&mut self, first_char: char) -> Vowel
+  fn parse_vowel(
+    &mut self,
+    first_char: char,
+    consonant_part: Consonant,
+  ) -> Vowel
   {
     match (first_char, self.peek())
     {
@@ -517,18 +625,18 @@ impl<'i> Tokenizer<'i>
       {
         // consume 'u'
         self.advance();
-        self.parse_virama_and_tone(BasicVowel::Au)
+        self.parse_virama_and_tone(BasicVowel::Au, consonant_part)
       }
-      ('a', _) => self.parse_virama_and_tone(BasicVowel::A),
-      ('i', _) => self.parse_virama_and_tone(BasicVowel::I),
+      ('a', _) => self.parse_virama_and_tone(BasicVowel::A, consonant_part),
+      ('i', _) => self.parse_virama_and_tone(BasicVowel::I, consonant_part),
       ('u', 'i') =>
       {
         // consume 'i'
         self.advance();
-        self.parse_virama_and_tone(BasicVowel::Ui)
+        self.parse_virama_and_tone(BasicVowel::Ui, consonant_part)
       }
-      ('u', _) => self.parse_virama_and_tone(BasicVowel::U),
-      ('e', _) => self.parse_virama_and_tone(BasicVowel::E),
+      ('u', _) => self.parse_virama_and_tone(BasicVowel::U, consonant_part),
+      ('e', _) => self.parse_virama_and_tone(BasicVowel::E, consonant_part),
       _ => unreachable!(),
     }
   }
@@ -544,7 +652,7 @@ impl<'i> Tokenizer<'i>
   /// A syllable token if valid, otherwise an unknown token.
   fn parse_vowel_syllable(&mut self, first_char: char) -> TokenKind
   {
-    TokenKind::Syllable(syllable!(self.parse_vowel(first_char)))
+    TokenKind::Syllable(syllable!(self.parse_vowel(first_char, consonant!(A))))
   }
 
   /// Handle the special case of 'h' which can form a medial consonant.
@@ -733,7 +841,7 @@ impl<'i> Tokenizer<'i>
     // no need to check for medial consonant and vowel.
     if consonant.basic == BasicConsonant::A
     {
-      let vowel = self.parse_vowel('a');
+      let vowel = self.parse_vowel('a', consonant);
       return TokenKind::Syllable(syllable!(vowel));
     }
 
@@ -831,7 +939,7 @@ impl<'i> Tokenizer<'i>
     let vowel = if matches!(self.peek(), 'a' | 'i' | 'u' | 'e')
     {
       let curr = self.advance().unwrap();
-      Some(self.parse_vowel(curr))
+      Some(self.parse_vowel(curr, consonant))
     }
     else
     {
@@ -883,9 +991,9 @@ mod tests
   use super::*;
 
   #[test]
-  fn development_test()
+  fn tokenizer_development_test()
   {
-    let mut tokenizer = Tokenizer::new("hin.");
+    let mut tokenizer = Tokenizer::new("lapa");
     println!("{:?}", tokenizer.next_token());
     println!("{:?}", tokenizer.next_token());
   }
