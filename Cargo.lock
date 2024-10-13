@@ -1529,7 +1529,6 @@ version = "0.1.0"
 dependencies = [
  "fancy-regex",
  "mlcts_core",
- "regex",
 ]
 
 [[package]]
