@@ -23,7 +23,7 @@ jobs:
         with:
           tool: cargo-binstall
       - name: Install Required Tools
-        run: cargo binstall -y trunk
+        run: cargo binstall --force -y trunk
       - name: Build the website
         working-directory: ./mlcts_website
         run: trunk build --release
