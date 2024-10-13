@@ -10,14 +10,9 @@ Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am 
 
 ## Current Progress
 
-- [ ] Tokenizer (MLCTS to tokens) - IMPROVEMENTS IN PROGRESS
-- [ ] Basic Myanmar script generator (tokens to Myanmar script without ambiguity resolution)
-- [ ] Stacked consonant recognition
-- [ ] Ambiguity resolver (Resolve ambiguous MLCTS token to correct Myanmar script )
-
-## Known Issues
-
-- [ ] Tokenizer can't generate/split tokens correctly for some cases if there's no space between two syllables. (e.g. "lapa" - လာပါ)
+- [x] Myanmar script to MLCTS converter [BASIC IMPLEMENTATION/NEED TESTING]
+- [ ] Tokenizer (MLCTS to tokens) [BLOCKED]
+- [ ] MLCTS to Myanmar script converter
 
 ## Development
 
