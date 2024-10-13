@@ -293,6 +293,36 @@ pub enum Virama
   L,
 }
 
+impl Into<BasicConsonant> for Virama
+{
+  /// Converts a Virama into a BasicConsonant.
+  ///
+  /// # Returns
+  ///
+  /// The corresponding BasicConsonant value.
+  fn into(self) -> BasicConsonant
+  {
+    match self
+    {
+      Self::K => BasicConsonant::K,
+      Self::G => BasicConsonant::G,
+      Self::Ng => BasicConsonant::Ng,
+      Self::C => BasicConsonant::C,
+      Self::J => BasicConsonant::J,
+      Self::Ny => BasicConsonant::Ny,
+      Self::T => BasicConsonant::T,
+      Self::Ht => BasicConsonant::Ht,
+      Self::D => BasicConsonant::D,
+      Self::N => BasicConsonant::N,
+      Self::P => BasicConsonant::P,
+      Self::B => BasicConsonant::B,
+      Self::M => BasicConsonant::M,
+      Self::S => BasicConsonant::S,
+      Self::L => BasicConsonant::L,
+    }
+  }
+}
+
 /// Represents a basic vowel letter in the Myanmar script.
 /// This enum contains only vowels classified as "basic" vowels and vowels with
 /// same sound but different tone will be treated as the same vowels.

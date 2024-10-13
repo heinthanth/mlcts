@@ -15,6 +15,10 @@ Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am 
 - [ ] Stacked consonant recognition
 - [ ] Ambiguity resolver (Resolve ambiguous MLCTS token to correct Myanmar script )
 
+## Known Issues
+
+- [ ] Tokenizer can't generate/split tokens correctly for some cases if there's no space between two syllables. (e.g. "lapa" - လာပါ)
+
 ## Development
 
 You will need the following:
