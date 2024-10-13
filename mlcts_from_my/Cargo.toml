@@ -1,0 +1,9 @@
+[package]
+name = "mlcts_from_my"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fancy-regex = "0.13.0"
+regex = "1.11.0"
+mlcts_core = { path = "../mlcts_core" }

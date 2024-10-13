@@ -1,3 +1,9 @@
+//! # mlcts_core
+//!
+//! This crate provides the core enums and structs used in the MLCTS.
+//! Enums like consonants, vowels, etc. are only related to the MLCTS and might
+//! not be able to map one-to-one with the Myanmar alphabets.
+
 /// The starting offset value to make providing emum values easier.
 /// If we want to use 0x1000 as the value for 'k', we can just
 /// set this value to 0x1000 and then all the following values will be
@@ -69,6 +75,100 @@ pub enum BasicConsonant
   // 0x1020 (ဠ) is skipped since the same character (l) is used.
   /// အ
   A = BASIC_CONSONANT_START_VALUE + 0x21,
+}
+
+impl BasicConsonant
+{
+  /// Converts a BasicConsonant into MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> &str
+  {
+    match self
+    {
+      Self::K => "k",
+      Self::Hk => "hk",
+      Self::G => "g",
+      Self::Gh => "gh",
+      Self::Ng => "ng",
+      Self::C => "c",
+      Self::Hc => "hc",
+      Self::J => "j",
+      Self::Jh => "jh",
+      Self::Ny => "ny",
+      Self::T => "t",
+      Self::Ht => "ht",
+      Self::D => "d",
+      Self::Dh => "dh",
+      Self::N => "n",
+      Self::P => "p",
+      Self::Hp => "hp",
+      Self::B => "b",
+      Self::Bh => "bh",
+      Self::M => "m",
+      Self::Y => "y",
+      Self::R => "r",
+      Self::L => "l",
+      Self::W => "w",
+      Self::S => "s",
+      Self::H => "h",
+      Self::A => "a",
+    }
+  }
+
+  /// Converts a char into a BasicConsonant.
+  ///
+  /// # Arguments
+  ///
+  /// * `c` - The char in Myanmar alphabet.
+  ///
+  /// # Returns
+  ///
+  /// The corresponding BasicConsonant value if the char is a valid Myanmar
+  /// consonant. Otherwise, an error.
+  pub fn from_my_alphabet(c: char) -> Result<BasicConsonant, ()>
+  {
+    match c
+    {
+      'က' => Ok(BasicConsonant::K),
+      'ခ' => Ok(BasicConsonant::Hk),
+      'ဂ' => Ok(BasicConsonant::G),
+      'ဃ' => Ok(BasicConsonant::Gh),
+      'င' => Ok(BasicConsonant::Ng),
+      'စ' => Ok(BasicConsonant::C),
+      'ဆ' => Ok(BasicConsonant::Hc),
+      'ဇ' => Ok(BasicConsonant::J),
+      'ဈ' => Ok(BasicConsonant::Jh),
+      'ဉ' => Ok(BasicConsonant::Ny),
+      'ည' => Ok(BasicConsonant::Ny),
+      'ဋ' => Ok(BasicConsonant::T),
+      'ဌ' => Ok(BasicConsonant::Ht),
+      'ဍ' => Ok(BasicConsonant::D),
+      'ဎ' => Ok(BasicConsonant::Dh),
+      'ဏ' => Ok(BasicConsonant::N),
+      'တ' => Ok(BasicConsonant::T),
+      'ထ' => Ok(BasicConsonant::Ht),
+      'ဒ' => Ok(BasicConsonant::D),
+      'ဓ' => Ok(BasicConsonant::Dh),
+      'န' => Ok(BasicConsonant::N),
+      'ပ' => Ok(BasicConsonant::P),
+      'ဖ' => Ok(BasicConsonant::Hp),
+      'ဗ' => Ok(BasicConsonant::B),
+      'ဘ' => Ok(BasicConsonant::Bh),
+      'မ' => Ok(BasicConsonant::M),
+      'ယ' => Ok(BasicConsonant::Y),
+      'ရ' => Ok(BasicConsonant::R),
+      'လ' => Ok(BasicConsonant::L),
+      'ဝ' => Ok(BasicConsonant::W),
+      'သ' => Ok(BasicConsonant::S),
+      'ဟ' => Ok(BasicConsonant::H),
+      'ဠ' => Ok(BasicConsonant::L),
+      'အ' => Ok(BasicConsonant::A),
+      _ => Err(()),
+    }
+  }
 }
 
 /// Represents medial diacritics in the Myanmar script.
@@ -222,6 +322,31 @@ impl Consonant
   {
     Self::new(basic, Some(medial))
   }
+
+  /// Convert Consontant to MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> String
+  {
+    let result = self.basic.to_mlcts().to_string();
+    match self.medial
+    {
+      Some(MedialDiacritic::Hrw) => format!("h{}rw", result),
+      Some(MedialDiacritic::Hyw) => format!("h{}yw", result),
+      Some(MedialDiacritic::Hw) => format!("h{}w", result),
+      Some(MedialDiacritic::Hr) => format!("h{}r", result),
+      Some(MedialDiacritic::Hy) => format!("h{}y", result),
+      Some(MedialDiacritic::H) => format!("h{}", result),
+      Some(MedialDiacritic::Rw) => format!("r{}w", result),
+      Some(MedialDiacritic::R) => format!("r{}", result),
+      Some(MedialDiacritic::Yw) => format!("y{}w", result),
+      Some(MedialDiacritic::Y) => format!("y{}", result),
+      Some(MedialDiacritic::W) => format!("w{}", result),
+      None => result,
+    }
+  }
 }
 
 /// A macro to create a simple consonant.
@@ -251,6 +376,23 @@ pub enum Tone
   High,
   /// အောက်မြစ် (Anusvara)
   Creaky,
+}
+
+impl Tone
+{
+  /// Converts a Tone into MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> &str
+  {
+    match self
+    {
+      Self::High => ":",
+      Self::Creaky => ".",
+    }
+  }
 }
 
 /// Represents a Virama (အသတ်) in the Myanmar script.
@@ -291,6 +433,36 @@ pub enum Virama
   S,
   /// လ်
   L,
+}
+
+impl Virama
+{
+  /// Converts virama into MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> &str
+  {
+    match self
+    {
+      Self::K => "k",
+      Self::G => "g",
+      Self::Ng => "ng",
+      Self::C => "c",
+      Self::J => "j",
+      Self::Ny => "ny",
+      Self::T => "t",
+      Self::Ht => "ht",
+      Self::D => "d",
+      Self::N => "n",
+      Self::P => "p",
+      Self::B => "b",
+      Self::M => "m",
+      Self::S => "s",
+      Self::L => "l",
+    }
+  }
 }
 
 impl Into<BasicConsonant> for Virama
@@ -346,6 +518,28 @@ pub enum BasicVowel
   Au,
   /// အို, အို့, အိုး
   Ui,
+}
+
+impl BasicVowel
+{
+  /// Converts a BasicVowel into MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> &str
+  {
+    match self
+    {
+      Self::A => "a",
+      Self::I => "i",
+      Self::U => "u",
+      Self::E => "e",
+      Self::Ai => "ai",
+      Self::Au => "au",
+      Self::Ui => "ui",
+    }
+  }
 }
 
 /// Represents the vowel part of a Myanmar syllable.
@@ -439,6 +633,33 @@ impl Vowel
   {
     Self::new(basic, Some(virama), None)
   }
+
+  /// Convert Vowel to MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> String
+  {
+    let result = self.basic.to_mlcts().to_string();
+    let virama = if self.virama.is_some()
+    {
+      self.virama.unwrap().to_mlcts().to_string()
+    }
+    else
+    {
+      "".to_string()
+    };
+    let tone = if self.tone.is_some()
+    {
+      self.tone.unwrap().to_mlcts().to_string()
+    }
+    else
+    {
+      "".to_string()
+    };
+    format!("{}{}{}", result, virama, tone)
+  }
 }
 
 /// A macro to create a simple vowel.
@@ -468,6 +689,34 @@ macro_rules! vowel {
   };
 }
 
+/// Represents a base syllable.
+/// A base syllable is a syllable that does not contain a bottom syllable.
+#[derive(
+  serde::Serialize, serde::Deserialize, Debug, Clone, Copy, PartialEq, Eq,
+)]
+pub struct BaseSyllable
+{
+  pub consonant: Consonant,
+  pub vowel: Vowel,
+}
+
+impl Into<Syllable> for BaseSyllable
+{
+  /// Converts a BaseSyllable into a Syllable.
+  ///
+  /// # Returns
+  ///
+  /// The corresponding Syllable value.
+  fn into(self) -> Syllable
+  {
+    Syllable {
+      consonant: self.consonant,
+      vowel: self.vowel,
+      bottom_syllable: None,
+    }
+  }
+}
+
 /// Represents a Myanmar syllable.
 /// A syllable can have at most one consonant part and one vowel part.
 /// Syllable will always contains both consonant and vowel parts since 'a' can
@@ -481,6 +730,26 @@ pub struct Syllable
   pub consonant: Consonant,
   /// The vowel part.
   pub vowel: Vowel,
+  /// The optional bottom consonant of stacked consonants.
+  /// This will be Some only if vowel has a virama.
+  /// And this can be a complete syllable itself.
+  pub bottom_syllable: Option<BaseSyllable>,
+}
+
+impl Into<BaseSyllable> for Syllable
+{
+  /// Converts a Syllable into a BaseSyllable.
+  ///
+  /// # Returns
+  ///
+  /// The corresponding BaseSyllable value.
+  fn into(self) -> BaseSyllable
+  {
+    BaseSyllable {
+      consonant: self.consonant,
+      vowel: self.vowel,
+    }
+  }
 }
 
 impl Syllable
@@ -491,13 +760,22 @@ impl Syllable
   ///
   /// * `consonant` - The consonant part.
   /// * `vowel` - The vowel part.
+  /// * `bottom_syllable` - The optional bottom consonant of stacked
   ///
   /// # Returns
   ///
   /// A new syllable with the given consonant and vowel.
-  pub fn new(consonant: Consonant, vowel: Vowel) -> Self
+  pub fn new(
+    consonant: Consonant,
+    vowel: Vowel,
+    bottom_syllable: Option<BaseSyllable>,
+  ) -> Self
   {
-    Self { consonant, vowel }
+    Self {
+      consonant,
+      vowel,
+      bottom_syllable,
+    }
   }
 
   /// Creates a new syllable with just the vowel part.
@@ -511,9 +789,30 @@ impl Syllable
   /// # Returns
   ///
   /// A new syllable with just the vowel part.
-  pub fn with_vowel(vowel: Vowel) -> Self
+  pub fn simple(vowel: Vowel) -> Self
   {
-    Self::new(consonant!(A), vowel)
+    Self::new(consonant!(A), vowel, None)
+  }
+
+  /// Convert Syllable to MLCTS string
+  ///
+  /// # Returns
+  ///
+  /// The corresponding MLCTS string.
+  pub fn to_mlcts(&self) -> String
+  {
+    let consonant = self.consonant.to_mlcts();
+    let vowel = self.vowel.to_mlcts();
+    let bottom = if self.bottom_syllable.is_some()
+    {
+      let s: Syllable = self.bottom_syllable.unwrap().into();
+      s.to_mlcts()
+    }
+    else
+    {
+      "".to_string()
+    };
+    format!("{}{}{}", consonant, vowel, bottom)
   }
 }
 
@@ -521,9 +820,12 @@ impl Syllable
 #[macro_export]
 macro_rules! syllable {
   ($vowel:expr) => {
-    $crate::Syllable::with_vowel($vowel)
+    $crate::Syllable::simple($vowel)
   };
   ($consonant:expr, $vowel:expr) => {
-    $crate::Syllable::new($consonant, $vowel)
+    $crate::Syllable::new($consonant, $vowel, None)
+  };
+  ($consonant:expr, $vowel:expr, $bottom_consonant:expr) => {
+    $crate::Syllable::new($consonant, $vowel, Some($bottom_consonant))
   };
 }

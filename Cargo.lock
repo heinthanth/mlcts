@@ -654,6 +654,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "fancy-regex"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "531e46835a22af56d1e3b66f04844bed63158bc094a628bec1d321d9b4c44bf2"
+dependencies = [
+ "bit-set",
+ "regex-automata",
+ "regex-syntax",
+]
+
+[[package]]
 name = "fastrand"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1510,6 +1521,15 @@ dependencies = [
  "serde_json",
  "serde_plain",
  "syn",
+]
+
+[[package]]
+name = "mlcts_from_my"
+version = "0.1.0"
+dependencies = [
+ "fancy-regex",
+ "mlcts_core",
+ "regex",
 ]
 
 [[package]]
