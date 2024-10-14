@@ -128,7 +128,7 @@ impl BasicConsonant
   ///
   /// The corresponding BasicConsonant value if the char is a valid Myanmar
   /// consonant. Otherwise, an error.
-  pub fn from_my_alphabet(c: char) -> Result<BasicConsonant, ()>
+  pub fn from_myanmar_alphabet(c: char) -> Result<BasicConsonant, ()>
   {
     match c
     {
@@ -433,6 +433,8 @@ pub enum Virama
   S,
   /// လ်
   L,
+  /// အ် to used in ရုယ္အ် (၍)
+  A,
 }
 
 impl Virama
@@ -461,6 +463,7 @@ impl Virama
       Self::M => "m",
       Self::S => "s",
       Self::L => "l",
+      Self::A => "a",
     }
   }
 }
@@ -491,6 +494,7 @@ impl Into<BasicConsonant> for Virama
       Self::M => BasicConsonant::M,
       Self::S => BasicConsonant::S,
       Self::L => BasicConsonant::L,
+      Self::A => BasicConsonant::A,
     }
   }
 }
@@ -512,6 +516,8 @@ pub enum BasicVowel
   U,
   /// အေ, အေ့, အေး
   E,
+  /// ဧ
+  Ei,
   /// အဲ့, အယ်, အဲ
   Ai,
   /// အော့, အော်, အော
@@ -535,6 +541,7 @@ impl BasicVowel
       Self::I => "i",
       Self::U => "u",
       Self::E => "e",
+      Self::Ei => "ei",
       Self::Ai => "ai",
       Self::Au => "au",
       Self::Ui => "ui",
@@ -689,34 +696,6 @@ macro_rules! vowel {
   };
 }
 
-/// Represents a base syllable.
-/// A base syllable is a syllable that does not contain a bottom syllable.
-#[derive(
-  serde::Serialize, serde::Deserialize, Debug, Clone, Copy, PartialEq, Eq,
-)]
-pub struct BaseSyllable
-{
-  pub consonant: Consonant,
-  pub vowel: Vowel,
-}
-
-impl Into<Syllable> for BaseSyllable
-{
-  /// Converts a BaseSyllable into a Syllable.
-  ///
-  /// # Returns
-  ///
-  /// The corresponding Syllable value.
-  fn into(self) -> Syllable
-  {
-    Syllable {
-      consonant: self.consonant,
-      vowel: self.vowel,
-      bottom_syllable: None,
-    }
-  }
-}
-
 /// Represents a Myanmar syllable.
 /// A syllable can have at most one consonant part and one vowel part.
 /// Syllable will always contains both consonant and vowel parts since 'a' can
@@ -730,26 +709,6 @@ pub struct Syllable
   pub consonant: Consonant,
   /// The vowel part.
   pub vowel: Vowel,
-  /// The optional bottom consonant of stacked consonants.
-  /// This will be Some only if vowel has a virama.
-  /// And this can be a complete syllable itself.
-  pub bottom_syllable: Option<BaseSyllable>,
-}
-
-impl Into<BaseSyllable> for Syllable
-{
-  /// Converts a Syllable into a BaseSyllable.
-  ///
-  /// # Returns
-  ///
-  /// The corresponding BaseSyllable value.
-  fn into(self) -> BaseSyllable
-  {
-    BaseSyllable {
-      consonant: self.consonant,
-      vowel: self.vowel,
-    }
-  }
 }
 
 impl Syllable
@@ -760,22 +719,13 @@ impl Syllable
   ///
   /// * `consonant` - The consonant part.
   /// * `vowel` - The vowel part.
-  /// * `bottom_syllable` - The optional bottom consonant of stacked
   ///
   /// # Returns
   ///
   /// A new syllable with the given consonant and vowel.
-  pub fn new(
-    consonant: Consonant,
-    vowel: Vowel,
-    bottom_syllable: Option<BaseSyllable>,
-  ) -> Self
+  pub fn new(consonant: Consonant, vowel: Vowel) -> Self
   {
-    Self {
-      consonant,
-      vowel,
-      bottom_syllable,
-    }
+    Self { consonant, vowel }
   }
 
   /// Creates a new syllable with just the vowel part.
@@ -791,7 +741,7 @@ impl Syllable
   /// A new syllable with just the vowel part.
   pub fn simple(vowel: Vowel) -> Self
   {
-    Self::new(consonant!(A), vowel, None)
+    Self::new(consonant!(A), vowel)
   }
 
   /// Convert Syllable to MLCTS string
@@ -803,16 +753,7 @@ impl Syllable
   {
     let consonant = self.consonant.to_mlcts();
     let vowel = self.vowel.to_mlcts();
-    let bottom = if self.bottom_syllable.is_some()
-    {
-      let s: Syllable = self.bottom_syllable.unwrap().into();
-      s.to_mlcts()
-    }
-    else
-    {
-      "".to_string()
-    };
-    format!("{}{}{}", consonant, vowel, bottom)
+    format!("{}{}", consonant, vowel)
   }
 }
 
@@ -823,9 +764,6 @@ macro_rules! syllable {
     $crate::Syllable::simple($vowel)
   };
   ($consonant:expr, $vowel:expr) => {
-    $crate::Syllable::new($consonant, $vowel, None)
-  };
-  ($consonant:expr, $vowel:expr, $bottom_consonant:expr) => {
-    $crate::Syllable::new($consonant, $vowel, Some($bottom_consonant))
+    $crate::Syllable::new($consonant, $vowel)
   };
 }

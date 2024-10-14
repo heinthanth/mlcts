@@ -1,5 +1,5 @@
 [package]
-name = "mlcts_from_my"
+name = "mlcts_generator"
 version = "0.1.0"
 edition = "2021"
 

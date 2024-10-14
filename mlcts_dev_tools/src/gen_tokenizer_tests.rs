@@ -134,7 +134,7 @@ fn gen_single_syllable_test(row: StringRecord) -> TokenStream
     fn #f_ident() {
       let expected_consonant = mlcts_core::Consonant::new(mlcts_core::BasicConsonant::#c_ident, #m_expr);
       let expected_vowel = mlcts_core::Vowel::new(mlcts_core::BasicVowel::#v_ident, #vi_expr, #t_expr);
-      let expected_syllable = mlcts_core::Syllable::new(expected_consonant, expected_vowel, None);
+      let expected_syllable = mlcts_core::Syllable::new(expected_consonant, expected_vowel);
 
       let mut tokenizer = Tokenizer::new(#i);
       let next_token = tokenizer.next_token();

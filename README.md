@@ -8,9 +8,17 @@ In Myanmar, many people use Myanglish or Burglish (Romanized versions of Myanmar
 However, there is no standardized system for this Romanization, making it difficult for me to read comfortably.
 Additionally, I admire how the Pinyin keyboard simplifies Mandarin input and am curious if I can create a similar one as a challenge for myself.
 
+## Crates Description
+
+- [`mlcts_core`](mlcts_core) - Provides essential Enums, Structs, etc.
+- [`mlcts_generator`](mlcts_generator) - Parse/tokenize Myanmar script and generate MLCTS string.
+- [`mlcts_tokenizer`](mlcts_tokenizer) - Parse/tokenize MLCTS string.
+- [`mlcts_dev_tools`](mlcts_dev_tools) - Internal tools use to generate tests, prepare dictionaries, etc.
+- [`mlcts_website`](mlcts_website) - Landing page of this project.
+
 ## Current Progress
 
-- [x] Myanmar script to MLCTS converter [BASIC IMPLEMENTATION/NEED TESTING]
+- [x] Myanmar script to MLCTS converter [NEED TESTING]
 - [ ] Tokenizer (MLCTS to tokens) [BLOCKED]
 - [ ] MLCTS to Myanmar script converter
 
