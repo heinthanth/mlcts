@@ -339,11 +339,11 @@ impl Consonant
       Some(MedialDiacritic::Hr) => format!("h{}r", result),
       Some(MedialDiacritic::Hy) => format!("h{}y", result),
       Some(MedialDiacritic::H) => format!("h{}", result),
-      Some(MedialDiacritic::Rw) => format!("r{}w", result),
-      Some(MedialDiacritic::R) => format!("r{}", result),
-      Some(MedialDiacritic::Yw) => format!("y{}w", result),
-      Some(MedialDiacritic::Y) => format!("y{}", result),
-      Some(MedialDiacritic::W) => format!("w{}", result),
+      Some(MedialDiacritic::Rw) => format!("{}rw", result),
+      Some(MedialDiacritic::R) => format!("{}r", result),
+      Some(MedialDiacritic::Yw) => format!("{}yw", result),
+      Some(MedialDiacritic::Y) => format!("{}y", result),
+      Some(MedialDiacritic::W) => format!("{}w", result),
       None => result,
     }
   }
@@ -700,15 +700,15 @@ macro_rules! vowel {
 /// A syllable can have at most one consonant part and one vowel part.
 /// Syllable will always contains both consonant and vowel parts since 'a' can
 /// be both a consonant and a vowel.
-#[derive(
-  serde::Serialize, serde::Deserialize, Debug, Clone, Copy, PartialEq, Eq,
-)]
+#[derive(serde::Serialize, serde::Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Syllable
 {
   /// The consonant part.
   pub consonant: Consonant,
   /// The vowel part.
   pub vowel: Vowel,
+  /// The optional stacked syllable part.
+  pub stacked: Option<Box<Syllable>>,
 }
 
 impl Syllable
@@ -723,9 +723,17 @@ impl Syllable
   /// # Returns
   ///
   /// A new syllable with the given consonant and vowel.
-  pub fn new(consonant: Consonant, vowel: Vowel) -> Self
+  pub fn new(
+    consonant: Consonant,
+    vowel: Vowel,
+    stacked: Option<Syllable>,
+  ) -> Self
   {
-    Self { consonant, vowel }
+    Self {
+      consonant,
+      vowel,
+      stacked: stacked.map(Box::new),
+    }
   }
 
   /// Creates a new syllable with just the vowel part.
@@ -741,7 +749,7 @@ impl Syllable
   /// A new syllable with just the vowel part.
   pub fn simple(vowel: Vowel) -> Self
   {
-    Self::new(consonant!(A), vowel)
+    Self::new(consonant!(A), vowel, None)
   }
 
   /// Convert Syllable to MLCTS string
@@ -751,9 +759,24 @@ impl Syllable
   /// The corresponding MLCTS string.
   pub fn to_mlcts(&self) -> String
   {
-    let consonant = self.consonant.to_mlcts();
+    let consonant = if self.consonant.basic == BasicConsonant::A
+    {
+      "".to_string()
+    }
+    else
+    {
+      self.consonant.to_mlcts()
+    };
     let vowel = self.vowel.to_mlcts();
-    format!("{}{}", consonant, vowel)
+    let stacked = if self.stacked.is_some()
+    {
+      self.stacked.as_ref().unwrap().to_mlcts()
+    }
+    else
+    {
+      "".to_string()
+    };
+    format!("{}{}{}", consonant, vowel, stacked)
   }
 }
 
@@ -764,6 +787,9 @@ macro_rules! syllable {
     $crate::Syllable::simple($vowel)
   };
   ($consonant:expr, $vowel:expr) => {
-    $crate::Syllable::new($consonant, $vowel)
+    $crate::Syllable::new($consonant, $vowel, None)
+  };
+  ($consonant:expr, $vowel:expr, $stacked:expr) => {
+    $crate::Syllable::new($consonant, $vowel, Some($stacked))
   };
 }

@@ -428,7 +428,7 @@ impl<'i> Tokenizer<'i>
       syllable!(consonant!(A), following_syllable_2_vowel);
 
     let selected_syllable = self.select_vowel(vec![
-      (base_syllable, following_syllable_2),
+      (base_syllable.clone(), following_syllable_2),
       (
         syllable!(consonant_part, Vowel::simple(original_vowel)),
         candidate_syllable,
