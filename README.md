@@ -1,6 +1,7 @@
 # LibMLCTS
 
 An experimental implementation of The Myanmar Language Commission Transcription System (1980), also known as the MLC Transcription System (MLCTS).
+This project aims to implement converters, input methods, extensions and so on.
 
 ## Motivation
 
